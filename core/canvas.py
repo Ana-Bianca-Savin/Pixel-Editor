@@ -28,7 +28,6 @@ class Canvas:
     # Set the pixel color of a point on the active layer.
     # This must also trigger an update to the preview since we made a modification
     def set_pixel(self, point, new_color):
-        print(new_color)
         self.layers[self.__active_layer_index].set_pixel(point, new_color)
         self.update_top_texture()
 
