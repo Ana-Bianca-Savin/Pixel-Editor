@@ -9,7 +9,7 @@ class BrushTool(Tool):
             cls._instance.brush_size = 1
         return cls._instance
 
-    # Fill in pixels
+    # Paint the pixels in the square with top left corner (x,y) and side brush_size
     def paint(self, x, y, color, canvas):
         half_size = self.brush_size // 2
         for i in range(x, x + self.brush_size):

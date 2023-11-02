@@ -1,6 +1,7 @@
 from core.layer import BlendingMode
 from core.canvas import Canvas
 from core.tools.brushtool import BrushTool
+from core.tools.erasertool import EraserTool
 import time
 
 size = (100, 100)
@@ -26,5 +27,9 @@ canvas.set_active_layer(2)
 BrushTool().set_brush_size(10)
 BrushTool().paint(80, 60, (255, 200, 0, 255), canvas)
 
+EraserTool().set_eraser_size(5)
+EraserTool().erase(80, 60, canvas)
+
 image = canvas.top_texture
 image.show()
+image.save('test.png')

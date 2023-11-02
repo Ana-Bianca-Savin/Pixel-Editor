@@ -1,5 +1,3 @@
-
-
 class ActiveColorPair():
     _instance = None
 
