@@ -23,3 +23,9 @@ class Layer:
 
     def set_pixel(self, point, new_color):
         self.__draw_object.point(point, fill=new_color)
+
+    def draw_line(self, start, end, color, stroke_weight):
+        self.__draw_object.line([start, end], color, stroke_weight, None)
+
+    def draw_rectangle(self, top_left, bottom_right, fill_color, stroke_color, stroke_weight):
+        self.__draw_object.rectangle([top_left, bottom_right], fill_color, stroke_color, stroke_weight)
