@@ -8,21 +8,21 @@ class RectangleTool(Tool):
             cls._instance = super().__new__(cls)
             cls._instance.stroke_weight = 1
             cls._instance.fill = False
-            cls._instance.fill_color = (255, 0, 0, 255)
-            cls._instance.stroke_color = (0, 0, 255, 255)
+            cls._instance.fill_color = None
+            cls._instance.stroke_color = (0, 0, 0, 255)
         return cls._instance
     
     def draw_rectangle(self, canvas, top_left, bottom_right):
         if self._instance.fill is True:
             canvas.draw_rectangle(top_left, bottom_right, self._instance.fill_color , self._instance.stroke_color, self._instance.stroke_weight)
         else:
-            canvas.draw_rectangle(top_left, bottom_right, (0, 0, 0, 0) , self._instance.stroke_color, self._instance.stroke_weight)
+            canvas.draw_rectangle(top_left, bottom_right, None , self._instance.stroke_color, self._instance.stroke_weight)
 
     def set_stroke_weight(self, w):
         self._instance.stroke_weight = w
 
     def set_stroke_color(self, c):
-        self._instance.stroke_weight = c
+        self._instance.stroke_color = c
 
     def set_fill(self, f):
         self._instance.fill = f

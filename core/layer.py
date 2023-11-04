@@ -24,6 +24,9 @@ class Layer:
     def set_pixel(self, point, new_color):
         self.__draw_object.point(point, fill=new_color)
 
+    def get_pixel(self, point):
+        return self.texture.getpixel(point)
+
     def draw_line(self, start, end, color, stroke_weight):
         self.__draw_object.line([start, end], color, stroke_weight, None)
 

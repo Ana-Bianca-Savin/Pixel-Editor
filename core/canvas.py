@@ -31,6 +31,9 @@ class Canvas:
         self.layers[self.__active_layer_index].set_pixel(point, new_color)
         self.update_top_texture()
 
+    def get_pixel(self, point):
+        return self.layers[self.__active_layer_index].get_pixel(point)
+
     def draw_line(self, start, end, color, stroke_weight):
         self.layers[self.__active_layer_index].draw_line(start, end, color, stroke_weight)
         self.update_top_texture()

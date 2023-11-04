@@ -1,5 +1,6 @@
 from core.tools.tool import Tool
 
+
 class BrushTool(Tool):
     _instance = None
 
@@ -10,7 +11,7 @@ class BrushTool(Tool):
         return cls._instance
 
     # Paint the pixels in the square with top left corner (x,y) and side brush_size
-    def paint(self, x, y, color, canvas):
+    def paint(self, canvas, x, y, color):
         half_size = self.brush_size // 2
         for i in range(x, x + self.brush_size):
             for j in range(y, y + self.brush_size):
