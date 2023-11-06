@@ -14,6 +14,9 @@ class BucketTool(Tool):
 
         stack = [(x, y)]
 
+        if canvas.get_pixel((x, y)) == color:
+            return
+
         while stack:
             x, y = stack.pop()
             if canvas.get_pixel((x, y)) == target_color:

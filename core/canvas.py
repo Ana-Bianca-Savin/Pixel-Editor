@@ -12,8 +12,8 @@ class Canvas:
         self.top_texture = Image.new("RGBA", size, (0, 0, 0, 0))
         self.__active_layer_index = 0
 
-    def add_layer(self, blending_mode=BlendingMode.NORMAL, background_color=None):
-        layer = Layer(self.size, blending_mode, None, background_color)
+    def add_layer(self, blending_mode=BlendingMode.NORMAL, fill_color=None):
+        layer = Layer(self.size, blending_mode, None, fill_color)
         self.layers.append(layer)
 
         self.update_top_texture()
