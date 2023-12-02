@@ -18,6 +18,11 @@ class Canvas:
 
         self.update_top_texture()
 
+    def place_texture(self, texture: Image.Image,
+                      center: tuple[int, int]):
+        self.layers[self.__active_layer_index].place_texture(texture, center)
+        self.update_top_texture()
+
     def set_active_layer(self, new_layer_index):
         # Is this new index a valid layer?
         if new_layer_index >= 0 and new_layer_index < len(self.layers):
@@ -40,6 +45,10 @@ class Canvas:
 
     def draw_rectangle(self, top_left, bottom_right, fill_color, stroke_color, stroke_weight):
         self.layers[self.__active_layer_index].draw_rectangle(top_left, bottom_right, fill_color, stroke_color, stroke_weight)
+        self.update_top_texture()
+
+    def draw_ellipse(self, center, axis, fill_color, stroke_color, stroke_weight):
+        self.layers[self.__active_layer_index].draw_ellipse(center, axis, fill_color, stroke_color, stroke_weight)
         self.update_top_texture()
 
     def set_top_texture(self, texture):
