@@ -18,6 +18,11 @@ class Canvas:
 
         self.update_top_texture()
 
+    def place_texture(self, texture: Image.Image,
+                      center: tuple[int, int]):
+        self.layers[self.__active_layer_index].place_texture(texture, center)
+        self.update_top_texture()
+
     def set_active_layer(self, new_layer_index):
         # Is this new index a valid layer?
         if new_layer_index >= 0 and new_layer_index < len(self.layers):

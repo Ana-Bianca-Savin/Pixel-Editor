@@ -40,3 +40,13 @@ class Layer:
         right = center[0] + axis[0]
         bottom = center[1] + axis[1]
         self.__draw_object.ellipse([left, top, right, bottom], fill_color, stroke_color, stroke_weight)
+
+    def place_texture(self, texture: Image.Image,
+                      center: tuple[int, int]):
+        left = center[0] - texture.size[0] // 2
+        right = center[0] + texture.size[0] // 2
+        top = center[1] - texture.size[1] // 2
+        bottom = center[1] + texture.size[1] // 2
+
+        alpha_mask = texture.split()[3]
+        self.texture.paste(texture, [left, top, right, bottom], alpha_mask)
