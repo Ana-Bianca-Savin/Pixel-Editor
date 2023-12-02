@@ -42,6 +42,10 @@ class Canvas:
         self.layers[self.__active_layer_index].draw_rectangle(top_left, bottom_right, fill_color, stroke_color, stroke_weight)
         self.update_top_texture()
 
+    def draw_ellipse(self, center, axis, fill_color, stroke_color, stroke_weight):
+        self.layers[self.__active_layer_index].draw_ellipse(center, axis, fill_color, stroke_color, stroke_weight)
+        self.update_top_texture()
+
     def set_top_texture(self, texture):
         self.top_texture = texture
 

@@ -32,3 +32,11 @@ class Layer:
 
     def draw_rectangle(self, top_left, bottom_right, fill_color, stroke_color, stroke_weight):
         self.__draw_object.rectangle([top_left, bottom_right], fill_color, stroke_color, stroke_weight)
+
+    def draw_ellipse(self, center, axis, fill_color, stroke_color, stroke_weight):
+        # Calculate the bounding box
+        left = center[0] - axis[0]
+        top = center[1] - axis[1]
+        right = center[0] + axis[0]
+        bottom = center[1] + axis[1]
+        self.__draw_object.ellipse([left, top, right, bottom], fill_color, stroke_color, stroke_weight)
