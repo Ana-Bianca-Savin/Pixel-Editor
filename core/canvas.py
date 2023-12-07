@@ -30,6 +30,9 @@ class Canvas:
             self.__active_layer_index = new_layer_index
         else:
             raise ValueError("Wrong layer index provided")
+        
+    def get_active_layer(self):
+        return self.layers[self.__active_layer_index]
 
     # Set the pixel color of a point on the active layer.
     # This must also trigger an update to the preview since we made a modification

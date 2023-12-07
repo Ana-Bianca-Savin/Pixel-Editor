@@ -5,6 +5,7 @@ from core.tools.erasertool import EraserTool
 from core.tools.linetool import LineTool
 from core.tools.rectangletool import RectangleTool
 from core.tools.buckettool import BucketTool
+from core.tools.eyedropper import Eyedropper
 from core.utilties import *
 from core.transform import *
 from core.mouseutil import *
@@ -69,6 +70,10 @@ def on_m1_press(event):
     BrushTool().set_brush_type(BrushType.ROUND)
     BrushTool().paint(canvas, mouse_x, mouse_y, (146, 14, 13, 255))
 
+    # Or use the eyedropper
+    #print(Eyedropper().sample(canvas, mouse_x, mouse_y))
+
+
 def on_m1_motion(event):
     x, y = event.x, event.y
     MouseUtil().update_mouse_coords(x // scale_factor_x, y // scale_factor_y)
@@ -131,15 +136,10 @@ def draw_frame():
     global img, c_w, ws
     c_w.delete("all")
 
-    # mouse_x = ws.winfo_pointerx() - ws.winfo_rootx()
-    # mouse_y = ws.winfo_pointery() - ws.winfo_rooty()
-
-    # LineTool().set_line_width(2)
-    # canvas.preview_layer.draw_line((40, 40), (mouse_x // scale_factor_x, mouse_y // scale_factor_y), (0, 0, 0, 255), 2)
-
     canvas.update_top_texture()
     img = ImageTk.PhotoImage(canvas.top_texture.resize(canvas_size, resample=Image.NEAREST))
     canvas.preview_layer.clear()
+
     c_w.create_image(0, 0, anchor=NW, image=img)
     ws.after(33, draw_frame)  # 30fps = ~33ms delay, 60fps = ~16ms delay
 
