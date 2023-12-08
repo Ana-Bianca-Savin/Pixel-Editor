@@ -127,7 +127,10 @@ def test_func(arg):
     brush_size = int(arg)
     print(brush_size)
 
-#brush_size = int(DoubleVar().get())
+
+label = Label(applicationFrame, text="Brush size", font=('Arial', 12))
+label.grid(row=0, column=0, sticky='nwe', padx=(0, 20))
+
 slider = Scale(
     applicationFrame,
     from_=1,
@@ -135,13 +138,13 @@ slider = Scale(
     orient='horizontal',
     command=test_func,
 )
-slider.grid(row=0, column=0, sticky='nwe', padx=(0, 20))
+slider.grid(row=0, column=0, sticky='nwe', padx=(0, 20), pady=(20, 0))
 
 # This frame contains all the tools buttons, placed in the first column
 buttonFrame = Frame(applicationFrame)
 buttonFrame.columnconfigure(0, weight=1)
 buttonFrame.columnconfigure(1, weight=1)
-buttonFrame.grid(row=0, column=0, sticky='nw', padx=(0, 20), pady=(100, 0))
+buttonFrame.grid(row=0, column=0, sticky='nw', padx=(0, 20), pady=(200, 0))
 
 #  Icons for buttons
 brush_tool_img = ImageTk.PhotoImage(Image.open('./assets/icons8-brush-48.png'))
@@ -282,6 +285,45 @@ btn_rectangle_tool = Button(
     command=lambda: set_selected_tool(6)
 )
 btn_rectangle_tool.grid(row=2, column=1, padx=buttons_padding_x, pady = buttons_padding_y)
+
+# Undo and redo buttons
+undo_img = ImageTk.PhotoImage(Image.open('./assets/icons8-undo-24.png'))
+redo_img = ImageTk.PhotoImage(Image.open('./assets/icons8-redo-24.png'))
+
+btn_undo = Button(
+    applicationFrame,
+    background=btn_color2,
+    foreground=btn_color4,
+    width=30,
+    height=30,
+    highlightthickness=2,
+    highlightbackground=btn_color2,
+    highlightcolor='WHITE',
+    activebackground=btn_color3,
+    activeforeground=btn_color4,
+    cursor='hand1',
+    border=0,
+    image=undo_img,
+)
+btn_undo.grid(row=0, column=0, sticky='w', padx=(buttons_padding_x, 20), pady = (300, 0))
+
+btn_redo = Button(
+    applicationFrame,
+    background=btn_color2,
+    foreground=btn_color4,
+    width=30,
+    height=30,
+    highlightthickness=2,
+    highlightbackground=btn_color2,
+    highlightcolor='WHITE',
+    activebackground=btn_color3,
+    activeforeground=btn_color4,
+    cursor='hand1',
+    border=0,
+    image=redo_img,
+)
+btn_redo.grid(row=0, column=0, sticky='w', padx=(40 + buttons_padding_x, 20), pady = (300, 0))
+
 
 
 # COLUMN 2
