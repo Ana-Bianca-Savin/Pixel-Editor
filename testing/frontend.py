@@ -40,6 +40,7 @@ brush_size = 1
 from tkinter import *
 from tkinter import Canvas as CanvasWidget
 from tkinter import colorchooser
+from tkinter import ttk
 from PIL import ImageTk, Image
 
 def use_brush(event):
@@ -116,17 +117,10 @@ applicationFrame.pack()
 
 # COLUMN 1
 
-#  Field for selecting the brush size
-# input_brush_size = Text(applicationFrame, height = 20, width = 20) 
-# input_brush_size.grid(row=0, column=0, sticky='nw', padx=(0, 20))
-# brush_size = input_brush_size.get(1.0, "end-1c")
-# print(brush_size)
-
-def test_func(arg):
+#  Slider for selecting the brush size
+def change_brush_size(arg):
     global brush_size
     brush_size = int(arg)
-    print(brush_size)
-
 
 label = Label(applicationFrame, text="Brush size", font=('Arial', 12))
 label.grid(row=0, column=0, sticky='nwe', padx=(0, 20))
@@ -136,7 +130,7 @@ slider = Scale(
     from_=1,
     to=10,
     orient='horizontal',
-    command=test_func,
+    command=change_brush_size,
 )
 slider.grid(row=0, column=0, sticky='nwe', padx=(0, 20), pady=(20, 0))
 
@@ -348,6 +342,126 @@ draw_frame()
 
 
 # COLUMN 3
+
+# Layer frame
+layers_wrapper = LabelFrame(applicationFrame)
+
+layers_canvas = Canvas(layers_wrapper, width=200, height=150)
+layers_canvas.pack(side=LEFT, fill='both', expand='yes')
+
+yscrollbar = ttk.Scrollbar(layers_wrapper, orient='vertical', command=layers_canvas.yview)
+yscrollbar.pack(side=RIGHT, fill='y')
+
+layers_canvas.config(yscrollcommand=yscrollbar.set)
+
+layers_canvas.bind('<Configure>', lambda e: layers_canvas.configure(scrollregion = layers_canvas.bbox('all')))
+
+layers_frame = Frame(layers_canvas)
+layers_canvas.create_window((0,0), width=240, window=layers_frame, anchor='nw')
+
+layers_wrapper.grid(row=0, column=2, sticky='nwe', padx=10, pady=(45, 10))
+
+
+btn_layers_list = []
+
+# Print the layers
+def print_layers():
+    global btn_layers_list
+    for i in range(len(canvas.layers)):
+        btn_layers_list.append(Button(layers_frame, text="My Button - " + str(i)))
+        btn_layers_list[i].pack(fill='x')
+print_layers()
+
+
+# Buttons for layers
+add_img = ImageTk.PhotoImage(Image.open('./assets/icons8-plus-24.png'))
+delete_img = ImageTk.PhotoImage(Image.open('./assets/icons8-minus-24.png'))
+up_img = ImageTk.PhotoImage(Image.open('./assets/icons8-up-24.png'))
+down_img = ImageTk.PhotoImage(Image.open('./assets/icons8-down-24.png'))
+
+def add_layer_btn():
+    global btn_layers_list
+
+    # Add new layer to canvas layer list and new button to button list
+    canvas.add_layer(BlendingMode.NORMAL)
+    btn_layers_list.append(Button(layers_frame, text="My Button - "))
+    btn_layers_list[len(btn_layers_list) - 1].pack(fill='x')
+
+    # Reconfigure canvas for the new size
+    layers_canvas.configure(scrollregion = layers_canvas.bbox('all'))
+
+
+btn_add = Button(
+    applicationFrame,
+    background=btn_color2,
+    foreground=btn_color4,
+    width=30,
+    height=30,
+    highlightthickness=2,
+    highlightbackground=btn_color2,
+    highlightcolor='WHITE',
+    activebackground=btn_color3,
+    activeforeground=btn_color4,
+    cursor='hand1',
+    border=0,
+    image=add_img,
+    command=add_layer_btn
+)
+btn_add.grid(row=0, column=2, sticky='nw', pady=(10, 0), padx=10)
+
+btn_delete = Button(
+    applicationFrame,
+    background=btn_color2,
+    foreground=btn_color4,
+    width=30,
+    height=30,
+    highlightthickness=2,
+    highlightbackground=btn_color2,
+    highlightcolor='WHITE',
+    activebackground=btn_color3,
+    activeforeground=btn_color4,
+    cursor='hand1',
+    border=0,
+    image=delete_img,
+)
+btn_delete.grid(row=0, column=2, sticky='nw', pady=(10, 0), padx=(45, 10))
+
+btn_up = Button(
+    applicationFrame,
+    background=btn_color2,
+    foreground=btn_color4,
+    width=30,
+    height=30,
+    highlightthickness=2,
+    highlightbackground=btn_color2,
+    highlightcolor='WHITE',
+    activebackground=btn_color3,
+    activeforeground=btn_color4,
+    cursor='hand1',
+    border=0,
+    image=up_img,
+)
+btn_up.grid(row=0, column=2, sticky='nw', pady=(10, 0), padx=(80, 10))
+
+btn_down = Button(
+    applicationFrame,
+    background=btn_color2,
+    foreground=btn_color4,
+    width=30,
+    height=30,
+    highlightthickness=2,
+    highlightbackground=btn_color2,
+    highlightcolor='WHITE',
+    activebackground=btn_color3,
+    activeforeground=btn_color4,
+    cursor='hand1',
+    border=0,
+    image=down_img,
+)
+btn_down.grid(row=0, column=2, sticky='nw', pady=(10, 0), padx=(115, 10))
+
+
+
 
 # Color chooser
 current_color = "black"
