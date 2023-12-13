@@ -11,6 +11,7 @@ class Canvas:
         self.size = size
         self.top_texture = Image.new("RGBA", size, (0, 0, 0, 0))
         self.__active_layer_index = 0
+        self.preview_layer = Layer(size, BlendingMode.NORMAL)
 
     def add_layer(self, blending_mode=BlendingMode.NORMAL, fill_color=None):
         layer = Layer(self.size, blending_mode, None, fill_color)
@@ -29,6 +30,9 @@ class Canvas:
             self.__active_layer_index = new_layer_index
         else:
             raise ValueError("Wrong layer index provided")
+        
+    def get_active_layer(self):
+        return self.layers[self.__active_layer_index]
 
     # Set the pixel color of a point on the active layer.
     # This must also trigger an update to the preview since we made a modification
@@ -58,6 +62,7 @@ class Canvas:
         merged = Image.new("RGBA", self.size, (0, 0, 0, 0))
         for layer in self.layers:
             merged = Image.alpha_composite(merged, layer.texture)
+        merged.alpha_composite(self.preview_layer.texture)
         return merged
 
     def update_top_texture(self):
