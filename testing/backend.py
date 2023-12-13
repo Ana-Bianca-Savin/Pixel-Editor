@@ -10,7 +10,7 @@ from core.utilties import *
 from core.transform import *
 from core.mouseutil import *
 
-size = (200, 200)
+size = (400, 400)
 
 canvas = Canvas(size)
 canvas.add_layer(BlendingMode.NORMAL, fill_color=(31, 29, 42))
@@ -21,12 +21,15 @@ canvas.set_active_layer(1)
 
 pizza_texture = import_texture("./testing/pizza.png")
 
-canvas.place_texture(Transform.scale(pizza_texture, (80, 80)), (40, 100))
-canvas.place_texture(Transform.rotate(Transform.scale(pizza_texture, (30, 30)), 45), (150, 120))
+rotated_pizza = Transform.rotate(pizza_texture, 40)
+canvas.place_texture(rotated_pizza, (40, 100))
 
-canvas.place_texture(Transform.rotate(Transform.scale(pizza_texture, (100, 100)), 195), (150, 30))
+# canvas.place_texture(Transform.scale(pizza_texture, (80, 80)), (40, 100))
+# canvas.place_texture(Transform.rotate(Transform.scale(pizza_texture, (30, 30)), 45), (150, 120))
 
-canvas.set_active_layer(2)
+# canvas.place_texture(Transform.rotate(Transform.scale(pizza_texture, (100, 100)), 195), (150, 30))
+
+# canvas.set_active_layer(2)
 
 # ---- PREVIEW IMAGE ----
 from tkinter import *
@@ -66,9 +69,9 @@ def on_m1_press(event):
     mouse_x = MouseUtil().mouse_x
     mouse_y = MouseUtil().mouse_y
 
-    BrushTool().set_brush_size(5)
-    BrushTool().set_brush_type(BrushType.ROUND)
-    BrushTool().paint(canvas, mouse_x, mouse_y, (146, 14, 13, 255))
+    # BrushTool().set_brush_size(5)
+    # BrushTool().set_brush_type(BrushType.ROUND)
+    # BrushTool().paint(canvas, mouse_x, mouse_y, (146, 14, 13, 255))
 
     # Or use the eyedropper
     #print(Eyedropper().sample(canvas, mouse_x, mouse_y))
@@ -87,25 +90,29 @@ def on_m1_motion(event):
     prev_x = MouseUtil().prev_x
     prev_y = MouseUtil().prev_y
 
-    BrushTool().set_brush_size(5)
-    BrushTool().set_brush_type(BrushType.ROUND)
-    BrushTool().paint(canvas, mouse_x, mouse_y, (146, 14, 13, 255))
 
-    # But hold on, if the previous frame we were still holding down the m1 button,
-    # depending of the speed of the mouse, we might have missed some spots to draw.
-    # So interpolate the mouse position between the previous mouse position and the current one
-    if MouseUtil().m1_down is True and MouseUtil().prev_m1_down is True:
-        distance = ((mouse_x - prev_x)**2 + (mouse_y - prev_y)**2)**0.5
-        if distance < 0.75 * BrushTool().get_brush_size():
-            return
-        num_steps = 10
+    EraserTool().set_eraser_size(10)
+    EraserTool().erase(mouse_x, mouse_y, canvas)
 
-        step_x = (mouse_x - prev_x) / num_steps
-        step_y = (mouse_y - prev_y) / num_steps
-        for i in range(num_steps):
-            x = int(prev_x + i * step_x)
-            y = int(prev_y + i * step_y)
-            BrushTool().paint(canvas, x, y, (146, 14, 13, 255))
+    # BrushTool().set_brush_size(5)
+    # BrushTool().set_brush_type(BrushType.ROUND)
+    # BrushTool().paint(canvas, mouse_x, mouse_y, (146, 14, 13, 255))
+
+    # # But hold on, if the previous frame we were still holding down the m1 button,
+    # # depending of the speed of the mouse, we might have missed some spots to draw.
+    # # So interpolate the mouse position between the previous mouse position and the current one
+    # if MouseUtil().m1_down is True and MouseUtil().prev_m1_down is True:
+    #     distance = ((mouse_x - prev_x)**2 + (mouse_y - prev_y)**2)**0.5
+    #     if distance < 0.75 * BrushTool().get_brush_size():
+    #         return
+    #     num_steps = 10
+
+    #     step_x = (mouse_x - prev_x) / num_steps
+    #     step_y = (mouse_y - prev_y) / num_steps
+    #     for i in range(num_steps):
+    #         x = int(prev_x + i * step_x)
+    #         y = int(prev_y + i * step_y)
+    #         BrushTool().paint(canvas, x, y, (146, 14, 13, 255))
 
 
 def on_m1_release(event):
@@ -130,7 +137,7 @@ c_w.bind("<ButtonRelease-1>", on_m1_release)
 c_w.pack()
 
 img = ImageTk.PhotoImage(canvas.top_texture.resize(canvas_size, resample=Image.NEAREST))
-c_w.create_image(0, 0, anchor=NW, image=img)  
+c_w.create_image(0, 0, anchor=NW, image=img)
 
 def draw_frame():
     global img, c_w, ws
@@ -147,4 +154,4 @@ draw_frame()
 ws.mainloop()
 
 # Save to disk
-export(canvas.top_texture, 'PNG', size, Image.NEAREST, 'output.png')
+# export(canvas.top_texture, 'PNG', size, Image.NEAREST, 'output.png')
