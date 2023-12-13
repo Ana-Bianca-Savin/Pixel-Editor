@@ -10,26 +10,25 @@ from core.utilties import *
 from core.transform import *
 from core.mouseutil import *
 
-size = (400, 400)
+size = (200, 200)
 
 canvas = Canvas(size)
 canvas.add_layer(BlendingMode.NORMAL, fill_color=(31, 29, 42))
-canvas.add_layer(BlendingMode.NORMAL)
 canvas.add_layer(BlendingMode.NORMAL)
 
 canvas.set_active_layer(1)
 
 pizza_texture = import_texture("./testing/pizza.png")
 
-rotated_pizza = Transform.rotate(pizza_texture, 40)
-canvas.place_texture(rotated_pizza, (40, 100))
+# rotated_pizza = Transform.rotate(pizza_texture, 40)
+# canvas.place_texture(rotated_pizza, (40, 100))
 
-# canvas.place_texture(Transform.scale(pizza_texture, (80, 80)), (40, 100))
+canvas.place_texture(Transform.scale(pizza_texture, (80, 80)), (40, 100))
 # canvas.place_texture(Transform.rotate(Transform.scale(pizza_texture, (30, 30)), 45), (150, 120))
 
 # canvas.place_texture(Transform.rotate(Transform.scale(pizza_texture, (100, 100)), 195), (150, 30))
 
-# canvas.set_active_layer(2)
+canvas.set_active_layer(0)
 
 # ---- PREVIEW IMAGE ----
 from tkinter import *
@@ -69,9 +68,9 @@ def on_m1_press(event):
     mouse_x = MouseUtil().mouse_x
     mouse_y = MouseUtil().mouse_y
 
-    # BrushTool().set_brush_size(5)
-    # BrushTool().set_brush_type(BrushType.ROUND)
-    # BrushTool().paint(canvas, mouse_x, mouse_y, (146, 14, 13, 255))
+    BrushTool().set_brush_size(5)
+    BrushTool().set_brush_type(BrushType.ROUND)
+    BrushTool().paint(canvas, mouse_x, mouse_y, (146, 14, 13, 255))
 
     # Or use the eyedropper
     #print(Eyedropper().sample(canvas, mouse_x, mouse_y))
