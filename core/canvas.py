@@ -33,6 +33,10 @@ class Canvas:
         
     def get_active_layer(self):
         return self.layers[self.__active_layer_index]
+    
+    def flood_fill(self, seed, color):
+        self.layers[self.__active_layer_index].flood_fill(seed, color)
+        self.update_top_texture()
 
     # Set the pixel color of a point on the active layer.
     # This must also trigger an update to the preview since we made a modification
