@@ -13,8 +13,8 @@ size = (100, 100)
 
 canvas = Canvas(size)
 canvas.add_layer(BlendingMode.NORMAL, fill_color=(255, 255, 255, 255))
-canvas.add_layer(BlendingMode.NORMAL)
-canvas.add_layer(BlendingMode.NORMAL)
+#canvas.add_layer(BlendingMode.NORMAL)
+#canvas.add_layer(BlendingMode.NORMAL)
 
 canvas.set_active_layer(0)
 
@@ -59,7 +59,7 @@ def use_eraser(event):
     x, y = event.x, event.y
     BrushTool().set_brush_size(brush_size)
     BrushTool().set_brush_type(BrushType.SQUARE)
-    BrushTool().paint(canvas, x // 8, y // 8, (255, 255, 255, 255))
+    BrushTool().paint(canvas, x // 8, y // 8, (255, 255, 255, 0))
 
 def use_line_tool(event):
     x, y = event.x, event.y
@@ -153,6 +153,10 @@ btn_color1 = '#0a0b0c'
 btn_color2 = '#606266'
 btn_color3 = '#72757a'
 btn_color4 = 'BLACK'
+
+btn_highlight2 = "#81848a"
+btn_highlight3 = "#7a7e85"
+btn_highlight4 = "WHITE"
 
 # Padding for buttons
 buttons_padding_x = 5
@@ -346,7 +350,7 @@ draw_frame()
 # Layer frame
 layers_wrapper = LabelFrame(applicationFrame)
 
-layers_canvas = Canvas(layers_wrapper, width=200, height=150)
+layers_canvas = Canvas(layers_wrapper, width=200, height=120)
 layers_canvas.pack(side=LEFT, fill='both', expand='yes')
 
 yscrollbar = ttk.Scrollbar(layers_wrapper, orient='vertical', command=layers_canvas.yview)
@@ -357,19 +361,87 @@ layers_canvas.config(yscrollcommand=yscrollbar.set)
 layers_canvas.bind('<Configure>', lambda e: layers_canvas.configure(scrollregion = layers_canvas.bbox('all')))
 
 layers_frame = Frame(layers_canvas)
+layers_frame.columnconfigure(0, weight=1)
 layers_canvas.create_window((0,0), width=240, window=layers_frame, anchor='nw')
 
 layers_wrapper.grid(row=0, column=2, sticky='nwe', padx=10, pady=(45, 10))
 
-
+# List of all buttons for layer
 btn_layers_list = []
+
+# Index of the last highlighted button
+last_btn_highlighted = 0
+
+def change_active_layer(index):
+    global btn_layers_list, last_btn_highlighted
+
+    # Set the new active layer
+    canvas.set_active_layer(index)
+    print(index)
+
+    # Highlight the active layer's button
+    btn_layers_list[index].configure(
+        background=btn_highlight2,
+        foreground=btn_highlight4,
+        highlightbackground=btn_highlight2,
+        activebackground=btn_highlight3,
+        activeforeground=btn_highlight4
+        )
+
+    # Return the old highlighted button to normal
+    if last_btn_highlighted != index:
+        btn_layers_list[last_btn_highlighted].configure(
+            background=btn_color2,
+            foreground=btn_color4,
+            highlightbackground=btn_color2,
+            activebackground=btn_color3,
+            activeforeground=btn_color4
+        )
+        last_btn_highlighted = index
+
+
+# Add an invisible object as the last one
+btn_dummy = (Button(layers_frame,
+    text="DUMMY",
+    background=btn_color2,
+    foreground=btn_color4,
+    highlightthickness=0,
+    highlightbackground=btn_color2,
+    highlightcolor='WHITE',
+    activebackground=btn_color3,
+    activeforeground=btn_color4,
+    borderwidth=1,
+))
+#btn_dummy.grid(row=1, column=0, sticky='ew')
 
 # Print the layers
 def print_layers():
     global btn_layers_list
     for i in range(len(canvas.layers)):
-        btn_layers_list.append(Button(layers_frame, text="My Button - " + str(i)))
-        btn_layers_list[i].pack(fill='x')
+        btn_layers_list.append(Button(layers_frame,
+        text="Layer " + str(i),
+        background=btn_color2,
+        foreground=btn_color4,
+        highlightthickness=0,
+        highlightbackground=btn_color2,
+        highlightcolor='WHITE',
+        activebackground=btn_color3,
+        activeforeground=btn_color4,
+        cursor='hand1',
+        borderwidth=1,
+        command=lambda i=i: change_active_layer(i)
+        ))
+        #btn_layers_list[i].pack(fill='x')
+        btn_layers_list[i].grid(row=i, column=0, sticky='ew')
+
+    # Highlight the active layer, which is the first
+    btn_layers_list[0].configure(
+    background=btn_highlight2,
+    foreground=btn_highlight4,
+    highlightbackground=btn_highlight2,
+    activebackground=btn_highlight3,
+    activeforeground=btn_highlight4
+    )
 print_layers()
 
 
@@ -380,12 +452,37 @@ up_img = ImageTk.PhotoImage(Image.open('./assets/icons8-up-24.png'))
 down_img = ImageTk.PhotoImage(Image.open('./assets/icons8-down-24.png'))
 
 def add_layer_btn():
-    global btn_layers_list
+    global btn_layers_list, btn_dummy
 
     # Add new layer to canvas layer list and new button to button list
     canvas.add_layer(BlendingMode.NORMAL)
-    btn_layers_list.append(Button(layers_frame, text="My Button - "))
-    btn_layers_list[len(btn_layers_list) - 1].pack(fill='x')
+    btn_layers_list.append(Button(layers_frame,
+        text="Layer " + str(len(canvas.layers) - 1),
+        background=btn_color2,
+        foreground=btn_color4,
+        highlightthickness=0,
+        highlightbackground=btn_color2,
+        highlightcolor='WHITE',
+        activebackground=btn_color3,
+        activeforeground=btn_color4,
+        cursor='hand1',
+        borderwidth=1,
+        command=lambda i=len(canvas.layers)-1: change_active_layer(i)
+        ))
+    #btn_layers_list[len(btn_layers_list) - 1].pack(fill='x')
+    #btn_layers_list[len(btn_layers_list) - 1].grid(row=len(btn_layers_list) - 1, column=0, sticky='ew')
+
+    btn_dummy.grid_forget()
+
+    for i in range(0, len(btn_layers_list)):
+        print(str(i+1) + " " + str(i) + str(btn_layers_list[i]))
+        btn_layers_list[i].grid_forget()
+        btn_layers_list[i].grid(row=len(btn_layers_list) - i - 1, column=0, sticky='ew')
+    btn_layers_list[len(btn_layers_list) - 1].grid(row=0, column=0, sticky='ew')
+    change_active_layer(len(btn_layers_list) - 1)
+
+    if len(btn_layers_list) >= 4:
+        btn_dummy.grid(row=len(btn_layers_list), column=0, sticky='ew')
 
     # Reconfigure canvas for the new size
     layers_canvas.configure(scrollregion = layers_canvas.bbox('all'))
@@ -459,9 +556,6 @@ btn_down = Button(
     image=down_img,
 )
 btn_down.grid(row=0, column=2, sticky='nw', pady=(10, 0), padx=(115, 10))
-
-
-
 
 # Color chooser
 current_color = "black"
