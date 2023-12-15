@@ -6,6 +6,7 @@ from core.tools.linetool import LineTool
 from core.tools.rectangletool import RectangleTool
 from core.tools.buckettool import BucketTool
 from core.tools.eyedropper import Eyedropper
+from core.mouseutil import MouseUtil
 
 # Canvas set-up
 size = (200, 200)
@@ -28,10 +29,41 @@ from tkinter import Canvas as CanvasWidget
 from tkinter import colorchooser
 from PIL import ImageTk, Image
 
+def release_m1(event):
+    MouseUtil().update_m1_button(False)
+
 def use_brush(event):
     x, y = event.x, event.y
-    # print(current_color)
-    BrushTool().paint(canvas, x // scale_factor_x, y // scale_factor_y, current_color) 
+    MouseUtil().update_mouse_coords(x // scale_factor_x, y // scale_factor_y)
+    BrushTool().paint(canvas, x // scale_factor_x, y // scale_factor_y, current_color)
+
+def use_brush_hold(event):
+    x, y = event.x, event.y
+    MouseUtil().update_m1_button(True)
+    MouseUtil().update_mouse_coords(x // scale_factor_x, y // scale_factor_y)
+
+    mouse_x = MouseUtil().mouse_x
+    mouse_y = MouseUtil().mouse_y
+    prev_x = MouseUtil().prev_x
+    prev_y = MouseUtil().prev_y
+
+    BrushTool().paint(canvas, mouse_x, mouse_y, current_color)
+    # But hold on, if the previous frame we were still holding down the m1 button,
+    # depending of the speed of the mouse, we might have missed some spots to draw.
+    # So interpolate the mouse position between the previous mouse position and the current one
+    if MouseUtil().m1_down is True and MouseUtil().prev_m1_down is True:
+        distance = ((mouse_x - prev_x)**2 + (mouse_y - prev_y)**2)**0.5
+        if distance < 0.75 * BrushTool().get_brush_size():
+            return
+        num_steps = 10
+
+        step_x = (mouse_x - prev_x) / num_steps
+        step_y = (mouse_y - prev_y) / num_steps
+        for i in range(num_steps):
+            x = int(prev_x + i * step_x)
+            y = int(prev_y + i * step_y)
+            BrushTool().paint(canvas, x, y, current_color)
+
 
 def use_fill(event):
     x, y = event.x, event.y
@@ -78,7 +110,7 @@ def update_current_tool():
     highlight_button()
 
     if selected_tool == 1:
-        c_w.bind("<B1-Motion>", use_brush)
+        c_w.bind("<B1-Motion>", use_brush_hold)
         c_w.bind("<Button-1>", use_brush)
     elif selected_tool == 2:
         c_w.bind("<Button-1>", use_fill)
@@ -287,8 +319,9 @@ btn_rectangle_tool.grid(row=2, column=1, padx=buttons_padding_x, pady = buttons_
 c_w = CanvasWidget(applicationFrame, width=real_size[0], height=real_size[1])
 selected_tool = 1
 highlight_button()
-c_w.bind("<B1-Motion>", use_brush)
+c_w.bind("<B1-Motion>", use_brush_hold)
 c_w.bind("<Button-1>", use_brush)
+c_w.bind("<ButtonRelease-1>", release_m1)
 c_w.grid(row=0, column=1)
 
 def draw_frame():
