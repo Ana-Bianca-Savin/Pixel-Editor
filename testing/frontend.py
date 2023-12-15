@@ -29,8 +29,36 @@ from tkinter import Canvas as CanvasWidget
 from tkinter import colorchooser
 from PIL import ImageTk, Image
 
+def handle_preview():
+    global selected_tool
+    if selected_tool == 4 and LineTool().get_drawing_state() is True:
+        # Draw the preview
+        origin = LineTool().get_origin()
+        end = (MouseUtil().mouse_x, MouseUtil().mouse_y)
+
+        def distance(p0, p1):
+            return (p0[0] - p1[0])**2 + (p0[1] - p1[1])**2
+        
+        if (distance(origin, end) > 9):
+            canvas.preview_layer.draw_line(origin, end, current_color, BrushTool().get_brush_size())
+            canvas.update_top_texture()
+
 def release_m1(event):
+    global selected_tool
+    x, y = event.x, event.y
     MouseUtil().update_m1_button(False)
+    MouseUtil().update_mouse_coords(x // scale_factor_x, y // scale_factor_y)
+
+    if selected_tool == 4 and LineTool().get_drawing_state() is True:
+        LineTool().set_drawing_state(False)
+        origin = LineTool().get_origin()
+        end = (MouseUtil().mouse_x, MouseUtil().mouse_y)
+        def distance(p0, p1):
+            return (p0[0] - p1[0])**2 + (p0[1] - p1[1])**2
+        
+        if (distance(origin, end) > 9):
+            LineTool().set_line_width(BrushTool().get_brush_size())
+            LineTool().draw_line(canvas, origin, end, current_color)
 
 def use_brush(event):
     x, y = event.x, event.y
@@ -76,8 +104,18 @@ def use_eraser(event):
 
 def use_line_tool(event):
     x, y = event.x, event.y
-    LineTool().set_line_width(2)
-    LineTool().draw_line(canvas, x // scale_factor_x, y // scale_factor_y, current_color)
+    MouseUtil().update_m1_button(True)
+    MouseUtil().update_mouse_coords(x // scale_factor_x, y // scale_factor_y)
+    if LineTool().get_drawing_state() is False:
+        # Mark the start of the preview and save the origin
+        LineTool().set_drawing_state(True)
+        LineTool().set_origin((MouseUtil().mouse_x, MouseUtil().mouse_y))
+
+def use_line_tool_hold(event):
+    x, y = event.x, event.y
+    MouseUtil().update_m1_button(True)
+    MouseUtil().update_mouse_coords(x // scale_factor_x, y // scale_factor_y)
+
 
 def use_eyedropper_tool(event):
     global current_color
@@ -118,7 +156,7 @@ def update_current_tool():
         c_w.bind("<B1-Motion>", use_eraser)
         c_w.bind("<Button-1>", use_eraser)
     elif selected_tool == 4:
-        c_w.bind("<B1-Motion>", use_line_tool)
+        c_w.bind("<B1-Motion>", use_line_tool_hold)
         c_w.bind("<Button-1>", use_line_tool)
     elif selected_tool == 5:
         c_w.bind("<B1-Motion>", use_eyedropper_tool)
@@ -327,8 +365,12 @@ c_w.grid(row=0, column=1)
 def draw_frame():
     global img, c_w, ws
     c_w.delete("all")
+
+    handle_preview()
+
     img = ImageTk.PhotoImage(canvas.top_texture.resize(real_size, resample=Image.NEAREST))
     c_w.create_image(0, 0, anchor=NW, image=img)
+    canvas.preview_layer.clear()
     ws.after(33, draw_frame)  # 30fps = ~33ms delay
 draw_frame()
 
