@@ -43,6 +43,18 @@ def handle_preview():
             canvas.preview_layer.draw_line(origin, end, current_color, BrushTool().get_brush_size())
             canvas.update_top_texture()
 
+    if selected_tool == 6 and RectangleTool().get_drawing_state() is True:
+        # Draw the preview
+        origin = RectangleTool().get_origin()
+        end = (MouseUtil().mouse_x, MouseUtil().mouse_y)
+
+        def distance(p0, p1):
+            return (p0[0] - p1[0])**2 + (p0[1] - p1[1])**2
+        
+        if (distance(origin, end) > 9):
+            canvas.preview_layer.draw_rectangle(origin, end, (0, 0, 0, 0), current_color, BrushTool().get_brush_size())
+            canvas.update_top_texture()
+
 def release_m1(event):
     global selected_tool
     x, y = event.x, event.y
@@ -59,6 +71,18 @@ def release_m1(event):
         if (distance(origin, end) > 9):
             LineTool().set_line_width(BrushTool().get_brush_size())
             LineTool().draw_line(canvas, origin, end, current_color)
+
+    if selected_tool == 6 and RectangleTool().get_drawing_state() is True:
+        RectangleTool().set_drawing_state(False)
+        origin = RectangleTool().get_origin()
+        end = (MouseUtil().mouse_x, MouseUtil().mouse_y)
+        def distance(p0, p1):
+            return (p0[0] - p1[0])**2 + (p0[1] - p1[1])**2
+        
+        if (distance(origin, end) > 9):
+            RectangleTool().set_stroke_weight(BrushTool().get_brush_size())
+            RectangleTool().set_stroke_color(current_color)
+            RectangleTool().draw_rectangle(canvas, origin, end)
 
 def use_brush(event):
     x, y = event.x, event.y
@@ -127,7 +151,18 @@ def use_eyedropper_tool(event):
     current_color = hex_color
 
 def use_rectangle_tool(event):
-    print("wow rectangle")
+    x, y = event.x, event.y
+    MouseUtil().update_m1_button(True)
+    MouseUtil().update_mouse_coords(x // scale_factor_x, y // scale_factor_y)
+    if RectangleTool().get_drawing_state() is False:
+        # Mark the start of the preview and save the origin
+        RectangleTool().set_drawing_state(True)
+        RectangleTool().set_origin((MouseUtil().mouse_x, MouseUtil().mouse_y))
+
+def use_rectangle_tool_hold(event):
+    x, y = event.x, event.y
+    MouseUtil().update_m1_button(True)
+    MouseUtil().update_mouse_coords(x // scale_factor_x, y // scale_factor_y)
 
 def highlight_button():
     global btn_brush_tool, btn_fill_tool, btn_eraser_tool, btn_line_tool, btn_eyedropper_tool, btn_rectangle_tool
@@ -162,7 +197,7 @@ def update_current_tool():
         c_w.bind("<B1-Motion>", use_eyedropper_tool)
         c_w.bind("<Button-1>", use_eyedropper_tool)
     elif selected_tool == 6:
-        c_w.bind("<B1-Motion>", use_rectangle_tool)
+        c_w.bind("<B1-Motion>", use_rectangle_tool_hold)
         c_w.bind("<Button-1>", use_rectangle_tool)
 
 
