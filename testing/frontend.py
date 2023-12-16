@@ -36,14 +36,14 @@ def undo_handler(event):
     global canvas
     new_canvas = undo_manager.undo()
     if new_canvas is not None:
-        print('undone')
+        # print('undone')
         canvas = new_canvas
 
 def redo_handler(event):
     global canvas
     new_canvas = undo_manager.redo()
     if new_canvas is not None:
-        print('redone')
+        # print('redone')
         canvas = new_canvas
 
 def handle_preview():
@@ -132,14 +132,10 @@ def use_brush_hold(event):
         distance = ((mouse_x - prev_x)**2 + (mouse_y - prev_y)**2)**0.5
         if distance < 0.75 * BrushTool().get_brush_size():
             return
-        num_steps = 10
 
-        step_x = (mouse_x - prev_x) / num_steps
-        step_y = (mouse_y - prev_y) / num_steps
-        for i in range(num_steps):
-            x = int(prev_x + i * step_x)
-            y = int(prev_y + i * step_y)
-            BrushTool().paint(canvas, x, y, current_color)
+        points = MouseUtil().interpolate(num_steps=10)
+        for p in points:
+            BrushTool().paint(canvas, p[0], p[1], current_color)
 
 
 def use_fill(event):

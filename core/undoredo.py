@@ -7,7 +7,7 @@ class UndoRedoManager:
         self.redo_stack = []
 
     def push_canvas(self, canvas : Canvas):
-        print('pushed canvas')
+        # print('pushed canvas')
 
         canvas.update_top_texture()
         self.undo_stack.append(canvas.copy())
