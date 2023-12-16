@@ -1,5 +1,6 @@
 from PIL import Image
 from core.layer import Layer, BlendingMode
+from core.utilties import export
 
 # A canvas stores an array of layers,
 # the preview of all the layers combined (called top_texture here)
@@ -71,3 +72,11 @@ class Canvas:
 
     def update_top_texture(self):
         self.top_texture = self.merge_layers()
+
+    def copy(self):
+        new_canvas = Canvas(self.size)
+        for layer in self.layers:
+            new_canvas.layers.append(layer.copy())
+        new_canvas.__active_layer_index = self.__active_layer_index
+        new_canvas.update_top_texture()
+        return new_canvas

@@ -59,3 +59,6 @@ class Layer:
 
         alpha_mask = texture.split()[3]
         self.texture.paste(texture, [left, top, right, bottom], alpha_mask)
+
+    def copy(self):
+        return Layer(self.layer_size, self.blending_mode, self.texture.copy())

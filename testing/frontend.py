@@ -1,14 +1,17 @@
 from core.layer import BlendingMode
 from core.canvas import Canvas
-from core.tools.brushtool import BrushTool, BrushType
+from core.tools.brushtool import BrushTool
 from core.tools.erasertool import EraserTool
 from core.tools.linetool import LineTool
 from core.tools.rectangletool import RectangleTool
 from core.tools.buckettool import BucketTool
 from core.tools.eyedropper import Eyedropper
 from core.mouseutil import MouseUtil
+from core.undoredo import UndoRedoManager
+from core.utilties import export
 
 # Canvas set-up
+undo_manager = UndoRedoManager()
 size = (200, 200)
 real_size = (800, 800)
 scale_factor_x = real_size[0] / size[0]
@@ -20,8 +23,8 @@ canvas.add_layer(BlendingMode.NORMAL)
 canvas.add_layer(BlendingMode.NORMAL)
 
 canvas.set_active_layer(0)
+undo_manager.push_canvas(canvas)
 
-brush_size = 1
 
 # ---- PREVIEW IMAGE ----
 from tkinter import *
@@ -29,8 +32,23 @@ from tkinter import Canvas as CanvasWidget
 from tkinter import colorchooser
 from PIL import ImageTk, Image
 
+def undo_handler(event):
+    global canvas
+    new_canvas = undo_manager.undo()
+    if new_canvas is not None:
+        print('undone')
+        canvas = new_canvas
+
+def redo_handler(event):
+    global canvas
+    new_canvas = undo_manager.redo()
+    if new_canvas is not None:
+        print('redone')
+        canvas = new_canvas
+
 def handle_preview():
     global selected_tool
+
     if selected_tool == 4 and LineTool().get_drawing_state() is True:
         # Draw the preview
         origin = LineTool().get_origin()
@@ -61,6 +79,9 @@ def release_m1(event):
     MouseUtil().update_m1_button(False)
     MouseUtil().update_mouse_coords(x // scale_factor_x, y // scale_factor_y)
 
+    if selected_tool == 1 or selected_tool == 3:
+        undo_manager.push_canvas(canvas)
+
     if selected_tool == 4 and LineTool().get_drawing_state() is True:
         LineTool().set_drawing_state(False)
         origin = LineTool().get_origin()
@@ -71,6 +92,8 @@ def release_m1(event):
         if (distance(origin, end) > 9):
             LineTool().set_line_width(BrushTool().get_brush_size())
             LineTool().draw_line(canvas, origin, end, current_color)
+
+        undo_manager.push_canvas(canvas)
 
     if selected_tool == 6 and RectangleTool().get_drawing_state() is True:
         RectangleTool().set_drawing_state(False)
@@ -83,6 +106,8 @@ def release_m1(event):
             RectangleTool().set_stroke_weight(BrushTool().get_brush_size())
             RectangleTool().set_stroke_color(current_color)
             RectangleTool().draw_rectangle(canvas, origin, end)
+
+        undo_manager.push_canvas(canvas)
 
 def use_brush(event):
     x, y = event.x, event.y
@@ -120,6 +145,7 @@ def use_brush_hold(event):
 def use_fill(event):
     x, y = event.x, event.y
     BucketTool().fill(canvas, x // scale_factor_x, y // scale_factor_y, current_color)
+    undo_manager.push_canvas(canvas)
 
 def use_eraser(event):
     x, y = event.x, event.y
@@ -395,6 +421,8 @@ highlight_button()
 c_w.bind("<B1-Motion>", use_brush_hold)
 c_w.bind("<Button-1>", use_brush)
 c_w.bind("<ButtonRelease-1>", release_m1)
+c_w.bind_all("<Control-z>", undo_handler)
+c_w.bind_all("<Control-y>", redo_handler)
 c_w.grid(row=0, column=1)
 
 def draw_frame():
