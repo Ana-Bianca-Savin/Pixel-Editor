@@ -277,8 +277,6 @@ def edit_palette(_parent_window: Tk, palettes_array, current_idx: list[int], pal
             error_label = Label(error_cannot_delete_only_palette, text="Can't delete the only palette")
             error_label.pack()
 
-            print("can't delete the only palette")
-
             palettes_array[current_palette_idx].set_colors(old_palette)
             # check if the index is 0, if so remove the palette and move at ex-index 1
         else:

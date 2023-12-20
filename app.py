@@ -8,7 +8,6 @@ from backend.tools.buckettool import BucketTool
 from backend.tools.eyedropper import Eyedropper
 from backend.mouseutil import MouseUtil
 from backend.undoredo import UndoRedoManager
-from backend.utilties import export
 
 # Canvas set-up
 undo_manager = UndoRedoManager()
@@ -24,13 +23,11 @@ canvas.add_layer(BlendingMode.NORMAL, fill_color=(255, 255, 255, 255))
 canvas.set_active_layer(0)
 undo_manager.push_canvas(canvas)
 
-
 # ---- PREVIEW IMAGE ----
 from tkinter import *
 from tkinter import Canvas as CanvasWidget
-from tkinter import colorchooser
-from tkinter import ttk
 from PIL import ImageTk, Image
+
 
 def undo_handler(event):
     global canvas
@@ -38,11 +35,13 @@ def undo_handler(event):
     if new_canvas is not None:
         canvas = new_canvas
 
+
 def redo_handler(event):
     global canvas
     new_canvas = undo_manager.redo()
     if new_canvas is not None:
         canvas = new_canvas
+
 
 def handle_preview():
     global selected_tool
@@ -53,8 +52,8 @@ def handle_preview():
         end = (MouseUtil().mouse_x, MouseUtil().mouse_y)
 
         def distance(p0, p1):
-            return (p0[0] - p1[0])**2 + (p0[1] - p1[1])**2
-        
+            return (p0[0] - p1[0]) ** 2 + (p0[1] - p1[1]) ** 2
+
         if (distance(origin, end) > 9):
             canvas.preview_layer.draw_line(origin, end, current_color.get(), BrushTool().get_brush_size())
             canvas.update_top_texture()
@@ -65,11 +64,13 @@ def handle_preview():
         end = (MouseUtil().mouse_x, MouseUtil().mouse_y)
 
         def distance(p0, p1):
-            return (p0[0] - p1[0])**2 + (p0[1] - p1[1])**2
-        
+            return (p0[0] - p1[0]) ** 2 + (p0[1] - p1[1]) ** 2
+
         if (distance(origin, end) > 9):
-            canvas.preview_layer.draw_rectangle(origin, end, (0, 0, 0, 0), current_color.get(), BrushTool().get_brush_size())
+            canvas.preview_layer.draw_rectangle(origin, end, (0, 0, 0, 0), current_color.get(),
+                                                BrushTool().get_brush_size())
             canvas.update_top_texture()
+
 
 def release_m1(event):
     global selected_tool
@@ -84,9 +85,10 @@ def release_m1(event):
         LineTool().set_drawing_state(False)
         origin = LineTool().get_origin()
         end = (MouseUtil().mouse_x, MouseUtil().mouse_y)
+
         def distance(p0, p1):
-            return (p0[0] - p1[0])**2 + (p0[1] - p1[1])**2
-        
+            return (p0[0] - p1[0]) ** 2 + (p0[1] - p1[1]) ** 2
+
         if (distance(origin, end) > 9):
             LineTool().set_line_width(BrushTool().get_brush_size())
             LineTool().draw_line(canvas, origin, end, current_color.get())
@@ -97,9 +99,10 @@ def release_m1(event):
         RectangleTool().set_drawing_state(False)
         origin = RectangleTool().get_origin()
         end = (MouseUtil().mouse_x, MouseUtil().mouse_y)
+
         def distance(p0, p1):
-            return (p0[0] - p1[0])**2 + (p0[1] - p1[1])**2
-        
+            return (p0[0] - p1[0]) ** 2 + (p0[1] - p1[1]) ** 2
+
         if (distance(origin, end) > 9):
             RectangleTool().set_stroke_weight(BrushTool().get_brush_size())
             RectangleTool().set_stroke_color(current_color.get())
@@ -107,10 +110,12 @@ def release_m1(event):
 
         undo_manager.push_canvas(canvas)
 
+
 def use_brush(event):
     x, y = event.x, event.y
     MouseUtil().update_mouse_coords(x // scale_factors[0], y // scale_factors[1])
     BrushTool().paint(canvas, x // scale_factors[0], y // scale_factors[1], current_color.get())
+
 
 def use_brush_hold(event):
     x, y = event.x, event.y
@@ -127,7 +132,7 @@ def use_brush_hold(event):
     # depending of the speed of the mouse, we might have missed some spots to draw.
     # So interpolate the mouse position between the previous mouse position and the current one
     if MouseUtil().m1_down is True and MouseUtil().prev_m1_down is True:
-        distance = ((mouse_x - prev_x)**2 + (mouse_y - prev_y)**2)**0.5
+        distance = ((mouse_x - prev_x) ** 2 + (mouse_y - prev_y) ** 2) ** 0.5
         if distance < 0.75 * BrushTool().get_brush_size():
             return
 
@@ -141,10 +146,12 @@ def use_fill(event):
     BucketTool().fill(canvas, x // scale_factors[0], y // scale_factors[1], current_color.get())
     undo_manager.push_canvas(canvas)
 
+
 def use_eraser(event):
     x, y = event.x, event.y
     EraserTool().set_eraser_size(BrushTool().get_brush_size())
     EraserTool().erase(x // scale_factors[0], y // scale_factors[1], canvas)
+
 
 def use_line_tool(event):
     x, y = event.x, event.y
@@ -154,6 +161,7 @@ def use_line_tool(event):
         # Mark the start of the preview and save the origin
         LineTool().set_drawing_state(True)
         LineTool().set_origin((MouseUtil().mouse_x, MouseUtil().mouse_y))
+
 
 def use_line_tool_hold(event):
     x, y = event.x, event.y
@@ -167,8 +175,9 @@ def use_eyedropper_tool(event):
     # Get the pixel color, slicing the alpha channel off
     pixel_color = Eyedropper().sample(canvas, x // scale_factors[0], y // scale_factors[1])[:3]
     # Convert it to hex then set it as the current color
-    hex_color = "#{:02X}{:02X}{:02X}".format(*pixel_color)    
+    hex_color = "#{:02X}{:02X}{:02X}".format(*pixel_color)
     current_color.set(hex_color)
+
 
 def use_rectangle_tool(event):
     x, y = event.x, event.y
@@ -179,21 +188,26 @@ def use_rectangle_tool(event):
         RectangleTool().set_drawing_state(True)
         RectangleTool().set_origin((MouseUtil().mouse_x, MouseUtil().mouse_y))
 
+
 def use_rectangle_tool_hold(event):
     x, y = event.x, event.y
     MouseUtil().update_m1_button(True)
     MouseUtil().update_mouse_coords(x // scale_factors[0], y // scale_factors[1])
 
+
 def highlight_button():
     global btn_brush_tool, btn_fill_tool, btn_eraser_tool, btn_line_tool, btn_eyedropper_tool, btn_rectangle_tool
     global selected_tool, btn_color2, btn_color3
     buttons = [btn_brush_tool, btn_fill_tool, btn_eraser_tool, btn_line_tool, btn_eyedropper_tool, btn_rectangle_tool]
-    buttons[selected_tool - 1].config(background=btn_highlight1, foreground=btn_highlight3, highlightbackground=btn_highlight1, activebackground=btn_highlight2, activeforeground=btn_highlight3)
+    buttons[selected_tool - 1].config(background=btn_highlight1, foreground=btn_highlight3,
+                                      highlightbackground=btn_highlight1, activebackground=btn_highlight2,
+                                      activeforeground=btn_highlight3)
 
     for i, button in enumerate(buttons):
         if i != selected_tool - 1:
-            button.config(background=btn_color1, foreground=btn_color3, highlightbackground=btn_color1, activebackground=btn_color2, activeforeground=btn_color3)
-        
+            button.config(background=btn_color1, foreground=btn_color3, highlightbackground=btn_color1,
+                          activebackground=btn_color2, activeforeground=btn_color3)
+
 
 def update_current_tool():
     global selected_tool
@@ -220,6 +234,7 @@ def update_current_tool():
         c_w.bind("<B1-Motion>", use_rectangle_tool_hold)
         c_w.bind("<Button-1>", use_rectangle_tool)
 
+
 # Create a button with an image
 def create_button_img(_parent_frame, tool_index, size, c1, c2, c3, image) -> Button:
     btn = Button(
@@ -243,6 +258,7 @@ def create_button_img(_parent_frame, tool_index, size, c1, c2, c3, image) -> But
 
     return btn
 
+
 # Initialize screen
 ws = Tk()
 ws.title('Pixel Editor')
@@ -264,6 +280,7 @@ applicationFrame.pack()
 #  Select the brush size
 def change_brush_size(arg):
     BrushTool().set_brush_size(int(arg))
+
 
 label = Label(applicationFrame, text="Brush size", font=('Arial', 12))
 label.grid(row=0, column=0, sticky='nwe', padx=(0, 20))
@@ -307,29 +324,31 @@ buttons_padding_y = 5
 #  Index of the selected tool
 selected_tool = 1
 
+
 def set_selected_tool(index):
     global selected_tool
     selected_tool = index
     update_current_tool()
 
+
 # Create all the buttons for tools
 btn_brush_tool = create_button_img(buttonFrame, 1, 50, btn_color1, btn_color2, btn_color3, brush_tool_img)
-btn_brush_tool.grid(row=0, column=0, padx=buttons_padding_x, pady = buttons_padding_y)
+btn_brush_tool.grid(row=0, column=0, padx=buttons_padding_x, pady=buttons_padding_y)
 
 btn_fill_tool = create_button_img(buttonFrame, 2, 50, btn_color1, btn_color2, btn_color3, fill_tool_img)
-btn_fill_tool.grid(row=0, column=1, padx=buttons_padding_x, pady = buttons_padding_y)
+btn_fill_tool.grid(row=0, column=1, padx=buttons_padding_x, pady=buttons_padding_y)
 
 btn_eraser_tool = create_button_img(buttonFrame, 3, 50, btn_color1, btn_color2, btn_color3, eraser_tool_img)
-btn_eraser_tool.grid(row=1, column=0, padx=buttons_padding_x, pady = buttons_padding_y)
+btn_eraser_tool.grid(row=1, column=0, padx=buttons_padding_x, pady=buttons_padding_y)
 
 btn_line_tool = create_button_img(buttonFrame, 4, 50, btn_color1, btn_color2, btn_color3, line_tool_img)
-btn_line_tool.grid(row=1, column=1, padx=buttons_padding_x, pady = buttons_padding_y)
+btn_line_tool.grid(row=1, column=1, padx=buttons_padding_x, pady=buttons_padding_y)
 
 btn_eyedropper_tool = create_button_img(buttonFrame, 5, 50, btn_color1, btn_color2, btn_color3, eyedropper_img)
-btn_eyedropper_tool.grid(row=2, column=0, padx=buttons_padding_x, pady = buttons_padding_y)
+btn_eyedropper_tool.grid(row=2, column=0, padx=buttons_padding_x, pady=buttons_padding_y)
 
 btn_rectangle_tool = create_button_img(buttonFrame, 6, 50, btn_color1, btn_color2, btn_color3, rectangle_tool_img)
-btn_rectangle_tool.grid(row=2, column=1, padx=buttons_padding_x, pady = buttons_padding_y)
+btn_rectangle_tool.grid(row=2, column=1, padx=buttons_padding_x, pady=buttons_padding_y)
 
 # Undo and redo buttons
 undo_img = ImageTk.PhotoImage(Image.open('./assets/icons8-undo-24.png'))
@@ -337,11 +356,11 @@ redo_img = ImageTk.PhotoImage(Image.open('./assets/icons8-redo-24.png'))
 
 btn_undo = create_button_img(applicationFrame, 0, 30, btn_color1, btn_color2, btn_color3, undo_img)
 btn_undo.configure(command=lambda event="<Control-z>": undo_handler(event))
-btn_undo.grid(row=0, column=0, sticky='w', padx=(buttons_padding_x, 20), pady = (300, 0))
+btn_undo.grid(row=0, column=0, sticky='w', padx=(buttons_padding_x, 20), pady=(300, 0))
 
 btn_redo = create_button_img(applicationFrame, 0, 30, btn_color1, btn_color2, btn_color3, redo_img)
 btn_redo.configure(command=lambda event="<Control-y>": redo_handler(event))
-btn_redo.grid(row=0, column=0, sticky='w', padx=(40 + buttons_padding_x, 20), pady = (300, 0))
+btn_redo.grid(row=0, column=0, sticky='w', padx=(40 + buttons_padding_x, 20), pady=(300, 0))
 
 # COLUMN 2
 
@@ -356,6 +375,7 @@ c_w.bind_all("<Control-z>", undo_handler)
 c_w.bind_all("<Control-y>", redo_handler)
 c_w.grid(row=0, column=1)
 
+
 def draw_frame():
     global img, c_w, ws
     c_w.delete("all")
@@ -366,6 +386,8 @@ def draw_frame():
     c_w.create_image(0, 0, anchor=NW, image=img)
     canvas.preview_layer.clear()
     ws.after(33, draw_frame)  # 30fps = ~33ms delay
+
+
 draw_frame()
 
 # COLUMN 3
@@ -381,22 +403,24 @@ invis_canvas.grid(row=0, column=0, sticky="nw")
 
 # Layer frame
 from frontend.layers_editor import *
+
 create_layer_scroller(applicationFrame, canvas)
 
 # Color chooser
 current_color = StringVar(value="black")
+
+
 def choose_color():
     global current_color
     clr = colorchooser.askcolor()[1]
     current_color.set(clr)
-# btn_color = Button(applicationFrame, text="Pick a color", font=('Arial', 18), command=choose_color)
-
 
 # Color preview
 square = CanvasWidget(applicationFrame, width=50, height=50)
 square.configure(bg=current_color.get())
 square.grid(row=0, column=0, sticky='w', padx=(buttons_padding_x - 5, 20), pady=(450, 0))
 square.bind("<Button-1>", lambda event: choose_color())
+
 
 def draw_current_color():
     global square

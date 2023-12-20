@@ -1,10 +1,9 @@
 from tkinter import *
 from tkinter import filedialog
-from tkinter import Canvas as CanvasWidget
-from PIL import ImageTk, Image
+from PIL import Image
 from backend import utilties as utils
 from backend.canvas import Canvas
-from backend.layer import Layer, BlendingMode
+from backend.layer import Layer
 
 
 def use_menu(_parent_window: Tk, project_name: Label, canvas: Canvas, scale_factors) -> None:

@@ -33,6 +33,12 @@ After the requirements are met, the app is ready to be executed. To run the app,
 
 ## Gallery
 ![Flower.png](gallery%2FFlower.png)
+![Star1.png](gallery%2FStar1.png)
+![Star2.png](gallery%2FStar2.png)
+![Square1.png](gallery%2FSquare1.png)
+![Flower1024.png](gallery%2FFlower1024.png)
+![Squares.png](gallery%2FSquares.png)\
+![Star.png](gallery%2FStar.png)
 ## Contributors
 Project contributors:
 - Vlad Chira - Pillow backend implementation
