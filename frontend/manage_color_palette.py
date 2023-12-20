@@ -3,7 +3,7 @@ from tkinter import Canvas as CanvasWidget
 from tkinter import colorchooser
 from PIL import ImageTk, Image
 
-from testing.color_palette import Color_Palette
+from frontend.color_palette import Color_Palette
 
 _new_palette_colors = []
 _editable_palette = []
@@ -62,6 +62,7 @@ def create_new_palette(_parent_window, new_cp: Color_Palette, palette_name: list
         _edit_color_window.title('Edit color')
         _edit_color_window.geometry('300x300')
 
+        create_palette_window.grab_release()
         # Grab the input focus to disable interaction with the palette creation window
         _edit_color_window.grab_set()
 
@@ -93,38 +94,39 @@ def create_new_palette(_parent_window, new_cp: Color_Palette, palette_name: list
                 'bg')
             update_colors_display()
             _edit_color_window.grab_release()
+            create_palette_window.grab_set()
             _edit_color_window.destroy()
 
         # save changes button
         save_changes_button = Button(_edit_color_frame, text="Save changes", command=lambda: save_changes())
-        save_changes_button.grid(row=0, column=0, padx=(0, 140))
+        save_changes_button.grid(row=0, column=0, padx=(0, 90))
 
         def delete_color():
             global _new_palette_colors
             _new_palette_colors.remove(old_bg)
             update_colors_display()
             _edit_color_window.grab_release()
+            create_palette_window.grab_set()
             _edit_color_window.destroy()
 
         # delete color button
         delete_color_button = Button(_edit_color_frame, text="Delete color", command=lambda: delete_color())
-        delete_color_button.grid(row=0, column=0, padx=(100, 0))
+        delete_color_button.grid(row=0, column=0, padx=(90, 0))
 
         def cancel_changes():
             global _new_palette_colors
             _new_palette_colors[_new_palette_colors.index(old_bg)] = old_bg
             update_colors_display()
             _edit_color_window.grab_release()
+            create_palette_window.grab_set()
             _edit_color_window.destroy()
 
         _edit_color_window.protocol("WM_DELETE_WINDOW", lambda: cancel_changes())
         _edit_color_window.wait_window(_edit_color_window)
 
     palette_name_entry = Entry(_window_palette_frame)
-    palette_name_entry.grid(row=0, column=0, padx=(0, 165), pady=(3, 0))
-
-    set_palette_name_button = Button(_window_palette_frame, text="Set palette name", command=get_input)
-    set_palette_name_button.grid(row=0, column=0, padx=(165, 0))
+    palette_name_entry.grid(row=0, column=0, pady=(3, 0))
+    palette_name_entry.bind("<Return>", lambda event: get_input())
 
     add_color_button = Button(_window_palette_frame, text="Add new color", command=add_new_color)
     add_color_button.grid(row=1, column=0)
@@ -185,9 +187,6 @@ def create_new_palette(_parent_window, new_cp: Color_Palette, palette_name: list
         for i in _window_palette_frame.winfo_children():
             if i.winfo_class() != 'Entry':
                 i.destroy()
-
-        set_palette_name_button = Button(_window_palette_frame, text="Set palette name", command=get_input)
-        set_palette_name_button.grid(row=0, column=0, padx=(165, 0))
 
         palette_name_entry.delete(0, END)
         palette_name_entry.insert(0, palette_name[0])
@@ -311,6 +310,7 @@ def edit_palette(_parent_window: Tk, palettes_array, current_idx: list[int], pal
         _edit_color_window.title('Edit color')
         _edit_color_window.geometry('300x300')
 
+        edit_palette_window.grab_release()
         # Grab the input focus to disable interaction with the palette creation window
         _edit_color_window.grab_set()
 
@@ -343,12 +343,13 @@ def edit_palette(_parent_window: Tk, palettes_array, current_idx: list[int], pal
 
             update_colors_display()
             _edit_color_window.grab_release()
+            edit_palette_window.grab_set()
             _edit_color_window.destroy()
 
         # save changes button
         save_changes_button = Button(_edit_color_frame, text="Save changes",
                                      command=lambda: update_color_save_changes())
-        save_changes_button.grid(row=0, column=0, padx=(0, 140))
+        save_changes_button.grid(row=0, column=0, padx=(0, 90))
 
         def update_color_delete_color():
             global _editable_palette
@@ -356,33 +357,33 @@ def edit_palette(_parent_window: Tk, palettes_array, current_idx: list[int], pal
 
             update_colors_display()
             _edit_color_window.grab_release()
+            edit_palette_window.grab_set()
             _edit_color_window.destroy()
 
         # delete color button
         delete_color_button = Button(_edit_color_frame, text="Delete color",
                                      command=lambda: update_color_delete_color())
-        delete_color_button.grid(row=0, column=0, padx=(100, 0))
+        delete_color_button.grid(row=0, column=0, padx=(90, 0))
 
         def update_color_cancel_changes():
             _selected_color.configure(bg=old_bg)
             update_colors_display()
             _edit_color_window.grab_release()
+            edit_palette_window.grab_set()
             _edit_color_window.destroy()
 
         _edit_color_window.protocol("WM_DELETE_WINDOW", lambda: update_color_cancel_changes())
         _edit_color_window.wait_window(_edit_color_window)
 
     update_palette_name_entry = Entry(_edit_palette_frame)
-    update_palette_name_entry.grid(row=0, column=0, padx=(0,165), pady=(3, 0))
-
-    set_palette_name_button = Button(_edit_palette_frame, text="Set palette name", command=get_input)
-    set_palette_name_button.grid(row=0, column=0, padx=(165, 0))
+    update_palette_name_entry.grid(row=0, column=0, pady=(3, 0))
+    update_palette_name_entry.bind("<Return>", lambda event: get_input())
 
     add_color_button = Button(_edit_palette_frame, text="Add new color", command=edit_palette_add_new_color)
-    add_color_button.grid(row=1, column=0, padx=(0, 125))
+    add_color_button.grid(row=1, column=0, padx=(0, 90))
 
     delete_palette_button = Button(_edit_palette_frame, text="Delete palette", command=edit_palette_delete_palette)
-    delete_palette_button.grid(row=1, column=0, padx=(125, 0))
+    delete_palette_button.grid(row=1, column=0, padx=(90, 0))
 
     # display colors added so far
     colors_so_far_label = Label(_edit_palette_frame, text="Colors so far:")
@@ -455,14 +456,11 @@ def edit_palette(_parent_window: Tk, palettes_array, current_idx: list[int], pal
             if i.winfo_class() != 'Entry':
                 i.destroy()
 
-        set_palette_name_button = Button(_edit_palette_frame, text="Set palette name", command=get_input)
-        set_palette_name_button.grid(row=0, column=0, padx=(165, 0))
-
         new_color_button = Button(_edit_palette_frame, text="Add new color", command=edit_palette_add_new_color)
-        new_color_button.grid(row=1, column=0, padx=(0, 125))
+        new_color_button.grid(row=1, column=0, padx=(0, 90))
 
         delete_palette_button = Button(_edit_palette_frame, text="Delete palette", command=edit_palette_delete_palette)
-        delete_palette_button.grid(row=1, column=0, padx=(125, 0))
+        delete_palette_button.grid(row=1, column=0, padx=(90, 0))
 
         # display colors added so far
         colors_so_far_label = Label(_edit_palette_frame, text="Colors so far:")

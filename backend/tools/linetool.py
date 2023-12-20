@@ -1,4 +1,4 @@
-from core.tools.tool import Tool
+from backend.tools.tool import Tool
 
 class LineTool(Tool):
     _instance = None

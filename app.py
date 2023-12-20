@@ -1,14 +1,14 @@
-from core.layer import BlendingMode
-from core.canvas import Canvas
-from core.tools.brushtool import BrushTool
-from core.tools.erasertool import EraserTool
-from core.tools.linetool import LineTool
-from core.tools.rectangletool import RectangleTool
-from core.tools.buckettool import BucketTool
-from core.tools.eyedropper import Eyedropper
-from core.mouseutil import MouseUtil
-from core.undoredo import UndoRedoManager
-from core.utilties import export
+from backend.layer import BlendingMode
+from backend.canvas import Canvas
+from backend.tools.brushtool import BrushTool
+from backend.tools.erasertool import EraserTool
+from backend.tools.linetool import LineTool
+from backend.tools.rectangletool import RectangleTool
+from backend.tools.buckettool import BucketTool
+from backend.tools.eyedropper import Eyedropper
+from backend.mouseutil import MouseUtil
+from backend.undoredo import UndoRedoManager
+from backend.utilties import export
 
 # Canvas set-up
 undo_manager = UndoRedoManager()
@@ -380,7 +380,7 @@ invis_canvas = CanvasWidget(column3Frame, width=200, height=200)
 invis_canvas.grid(row=0, column=0, sticky="nw")
 
 # Layer frame
-from testing.layers_editor import *
+from frontend.layers_editor import *
 create_layer_scroller(applicationFrame, canvas)
 
 # Color chooser
@@ -408,8 +408,8 @@ def draw_current_color():
 draw_current_color()
 
 # denis' great (copium) code
-from testing.manage_color_palette import *
-from testing.SideBarGUI import *
+from frontend.manage_color_palette import *
+from frontend.SideBarGUI import *
 
 sidebargui = SideBarGUI(canvas, ws, column3Frame)
 
@@ -431,7 +431,7 @@ def draw_preview_frame():
     preview_image = ImageTk.PhotoImage(canvas.top_texture.resize((250, 250), resample=Image.NEAREST))
     preview_canvas.create_image(0, 0, anchor=NW, image=preview_image)
 
-    ws.after(33, lambda: draw_preview_frame())  # 30fps = ~33ms delay
+    ws.after(100, lambda: draw_preview_frame())
 
 
 draw_preview_frame()

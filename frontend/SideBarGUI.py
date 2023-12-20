@@ -1,6 +1,6 @@
-from testing.color_palette import Color_Palette as cp
-from testing.manage_color_palette import create_new_palette, edit_palette
-from testing.menu import *
+from frontend.color_palette import Color_Palette as cp
+from frontend.manage_color_palette import create_new_palette, edit_palette
+from frontend.menu import *
 
 
 def change_draw_color(color: str, current_color: StringVar):

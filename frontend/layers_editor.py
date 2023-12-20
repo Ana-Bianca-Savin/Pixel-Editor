@@ -1,5 +1,5 @@
-from core.canvas import Canvas
-from core.layer import BlendingMode
+from backend.canvas import Canvas
+from backend.layer import BlendingMode
 
 from tkinter import *
 from tkinter import Canvas
