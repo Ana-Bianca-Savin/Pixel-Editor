@@ -1,6 +1,6 @@
 # A util class that handles mouse input
 # It should also implement mouse interpolation
-# TODO
+
 class MouseUtil():
     _instance = None
     def __new__(cls):

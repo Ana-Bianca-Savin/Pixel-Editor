@@ -1,6 +1,6 @@
 from PIL import Image
-from core.layer import Layer, BlendingMode
-from core.utilties import export
+from backend.layer import Layer, BlendingMode
+from backend.utilties import export
 
 # A canvas stores an array of layers,
 # the preview of all the layers combined (called top_texture here)

@@ -1,6 +1,6 @@
-from testing.color_palette import Color_Palette as cp
-from testing.manage_color_palette import create_new_palette, edit_palette
-from testing.menu import *
+from frontend.color_palette import Color_Palette as cp
+from frontend.manage_color_palette import create_new_palette, edit_palette
+from frontend.menu import *
 
 
 def change_draw_color(color: str, current_color: StringVar):
@@ -149,8 +149,6 @@ class SideBarGUI:
             palettes_names = []
             for i in range(len(self.color_palettes)):
                 palettes_names.append(self.color_palettes[i].name)
-            print(self.palettes_idxs)
-            print(palettes_names)
 
             # find the deleted palette index
             deleted_idx = -1
@@ -158,9 +156,6 @@ class SideBarGUI:
                 if self.palettes_idxs[i] not in palettes_names:
                     deleted_idx = i
                     break
-
-            print(deleted_idx)
-            print(self.palettes_idxs[deleted_idx])
 
             # remove the deleted palette index from the palettes_idxs array
             self.palettes_idxs.remove(self.palettes_idxs[deleted_idx])

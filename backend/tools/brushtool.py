@@ -1,4 +1,4 @@
-from core.tools.tool import Tool
+from backend.tools.tool import Tool
 from enum import Enum
 
 class BrushType(Enum):
@@ -13,7 +13,7 @@ class BrushTool(Tool):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls._instance.brush_size = 1
-            cls._instance.brush_type = BrushType.ROUND
+            cls._instance.brush_type = BrushType.SQUARE
         return cls._instance
 
     # Paint the pixels with the brush, depending on its type

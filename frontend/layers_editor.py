@@ -1,5 +1,5 @@
-from core.canvas import Canvas
-from core.layer import BlendingMode
+from backend.canvas import Canvas
+from backend.layer import BlendingMode
 
 from tkinter import *
 from tkinter import Canvas
@@ -60,10 +60,8 @@ def create_button_img(_parent_frame, size, c1, c2, c3, image) -> Button:
 
 def change_active_layer(index, canvas: Canvas):
     global btn_layers_list, last_btn_highlighted
-    print(f'index : {index}, last_btn_high : {last_btn_highlighted}')
     # Set the new active layer
     canvas.set_active_layer(index)
-    print(index)
 
     # Highlight the active layer's button
     btn_layers_list[index].configure(

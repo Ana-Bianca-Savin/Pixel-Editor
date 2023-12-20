@@ -1,5 +1,5 @@
-from core.canvas import Canvas
-from core.utilties import export
+from backend.canvas import Canvas
+from backend.utilties import export
 
 class UndoRedoManager:
     def __init__(self) -> None:
