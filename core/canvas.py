@@ -14,10 +14,18 @@ class Canvas:
         self.__active_layer_index = 0
         self.preview_layer = Layer(size, BlendingMode.NORMAL)
 
+    def get_active_layer_index(self):
+        return self.__active_layer_index
+
     def add_layer(self, blending_mode=BlendingMode.NORMAL, fill_color=None):
         layer = Layer(self.size, blending_mode, None, fill_color)
         self.layers.append(layer)
 
+        self.update_top_texture()
+
+    def delete_layer(self, index):
+        self.layers.pop(index)
+        
         self.update_top_texture()
 
     def place_texture(self, texture: Image.Image,

@@ -19,8 +19,6 @@ scale_factor_y = real_size[1] / size[1]
 
 canvas = Canvas(size)
 canvas.add_layer(BlendingMode.NORMAL, fill_color=(255, 255, 255, 255))
-canvas.add_layer(BlendingMode.NORMAL)
-canvas.add_layer(BlendingMode.NORMAL)
 
 canvas.set_active_layer(0)
 undo_manager.push_canvas(canvas)
@@ -30,20 +28,19 @@ undo_manager.push_canvas(canvas)
 from tkinter import *
 from tkinter import Canvas as CanvasWidget
 from tkinter import colorchooser
+from tkinter import ttk
 from PIL import ImageTk, Image
 
 def undo_handler(event):
     global canvas
     new_canvas = undo_manager.undo()
     if new_canvas is not None:
-        # print('undone')
         canvas = new_canvas
 
 def redo_handler(event):
     global canvas
     new_canvas = undo_manager.redo()
     if new_canvas is not None:
-        # print('redone')
         canvas = new_canvas
 
 def handle_preview():
@@ -190,11 +187,11 @@ def highlight_button():
     global btn_brush_tool, btn_fill_tool, btn_eraser_tool, btn_line_tool, btn_eyedropper_tool, btn_rectangle_tool
     global selected_tool, btn_color2, btn_color3
     buttons = [btn_brush_tool, btn_fill_tool, btn_eraser_tool, btn_line_tool, btn_eyedropper_tool, btn_rectangle_tool]
-    buttons[selected_tool - 1].config(background="#373738", activebackground="#373738")
+    buttons[selected_tool - 1].config(background=btn_highlight1, foreground=btn_highlight3, highlightbackground=btn_highlight1, activebackground=btn_highlight2, activeforeground=btn_highlight3)
 
     for i, button in enumerate(buttons):
         if i != selected_tool - 1:
-            button.config(background=btn_color2, activebackground=btn_color3)
+            button.config(background=btn_color1, foreground=btn_color3, highlightbackground=btn_color1, activebackground=btn_color2, activeforeground=btn_color3)
         
 
 def update_current_tool():
@@ -222,11 +219,32 @@ def update_current_tool():
         c_w.bind("<B1-Motion>", use_rectangle_tool_hold)
         c_w.bind("<Button-1>", use_rectangle_tool)
 
+# Create a button with an image
+def create_button_img(_parent_frame, tool_index, size, c1, c2, c3, image) -> Button:
+    btn = Button(
+        _parent_frame,
+        background=c1,
+        foreground=c3,
+        width=size,
+        height=size,
+        highlightthickness=2,
+        highlightbackground=c1,
+        highlightcolor='WHITE',
+        activebackground=c2,
+        activeforeground=c3,
+        cursor='hand1',
+        border=0,
+        image=image
+    )
+
+    if tool_index != 0:
+        btn.configure(command=lambda: set_selected_tool(tool_index))
+
+    return btn
 
 # Initialize screen
 ws = Tk()
 ws.title('Pixel Editor')
-# ws.geometry('800x800')
 
 # This label should be the name of the project
 label = Label(ws, text="Pixel Editor", font=('Arial', 18))
@@ -242,16 +260,13 @@ applicationFrame.pack()
 
 # COLUMN 1
 
-#  Field for selecting the brush size
-# input_brush_size = Text(applicationFrame, height = 20, width = 20) 
-# input_brush_size.grid(row=0, column=0, sticky='nw', padx=(0, 20))
-# brush_size = input_brush_size.get(1.0, "end-1c")
-# print(brush_size)
-
+#  Select the brush size
 def change_brush_size(arg):
     BrushTool().set_brush_size(int(arg))
 
-#brush_size = int(DoubleVar().get())
+label = Label(applicationFrame, text="Brush size", font=('Arial', 12))
+label.grid(row=0, column=0, sticky='nwe', padx=(0, 20))
+
 slider = Scale(
     applicationFrame,
     from_=1,
@@ -259,13 +274,13 @@ slider = Scale(
     orient='horizontal',
     command=change_brush_size,
 )
-slider.grid(row=0, column=0, sticky='nwe', padx=(0, 20))
+slider.grid(row=0, column=0, sticky='nwe', padx=(0, 20), pady=(20, 0))
 
 # This frame contains all the tools buttons, placed in the first column
 buttonFrame = Frame(applicationFrame)
 buttonFrame.columnconfigure(0, weight=1)
 buttonFrame.columnconfigure(1, weight=1)
-buttonFrame.grid(row=0, column=0, sticky='nw', padx=(0, 20), pady=(100, 0))
+buttonFrame.grid(row=0, column=0, sticky='nw', padx=(0, 20), pady=(200, 0))
 
 #  Icons for buttons
 brush_tool_img = ImageTk.PhotoImage(Image.open('./assets/icons8-brush-48.png'))
@@ -276,10 +291,13 @@ eyedropper_img = ImageTk.PhotoImage(Image.open('./assets/icons8-eye-dropper-48.p
 rectangle_tool_img = ImageTk.PhotoImage(Image.open('./assets/icons8-rectangle-48.png'))
 
 # Colors for buttons
-btn_color1 = '#0a0b0c'
-btn_color2 = '#606266'
-btn_color3 = '#72757a'
-btn_color4 = 'BLACK'
+btn_color1 = '#606266'
+btn_color2 = '#72757a'
+btn_color3 = 'BLACK'
+
+btn_highlight1 = "#81848a"
+btn_highlight2 = "#7a7e85"
+btn_highlight3 = "WHITE"
 
 # Padding for buttons
 buttons_padding_x = 5
@@ -293,120 +311,36 @@ def set_selected_tool(index):
     selected_tool = index
     update_current_tool()
 
-btn_brush_tool = Button(
-    buttonFrame,
-    background=btn_color2,
-    foreground=btn_color4,
-    width=50,
-    height=50,
-    highlightthickness=2,
-    highlightbackground=btn_color2,
-    highlightcolor='WHITE',
-    activebackground=btn_color3,
-    activeforeground=btn_color4,
-    cursor='hand1',
-    border=0,
-    image=brush_tool_img,
-    font=('Arial', 18),
-    command=lambda: set_selected_tool(1)
-)
+# Create all the buttons for tools
+btn_brush_tool = create_button_img(buttonFrame, 1, 50, btn_color1, btn_color2, btn_color3, brush_tool_img)
 btn_brush_tool.grid(row=0, column=0, padx=buttons_padding_x, pady = buttons_padding_y)
 
-btn_fill_tool = Button(
-    buttonFrame,
-    background=btn_color2,
-    foreground=btn_color4,
-    width=50,
-    height=50,
-    highlightthickness=2,
-    highlightbackground=btn_color2,
-    highlightcolor='WHITE',
-    activebackground=btn_color3,
-    activeforeground=btn_color4,
-    cursor='hand1',
-    border=0,
-    image=fill_tool_img,
-    font=('Arial', 18),
-    command=lambda: set_selected_tool(2)
-)
+btn_fill_tool = create_button_img(buttonFrame, 2, 50, btn_color1, btn_color2, btn_color3, fill_tool_img)
 btn_fill_tool.grid(row=0, column=1, padx=buttons_padding_x, pady = buttons_padding_y)
 
-btn_eraser_tool = Button(
-    buttonFrame,
-    background=btn_color2,
-    foreground=btn_color4,
-    width=50,
-    height=50,
-    highlightthickness=2,
-    highlightbackground=btn_color2,
-    highlightcolor='WHITE',
-    activebackground=btn_color3,
-    activeforeground=btn_color4,
-    cursor='hand1',
-    border=0,
-    image=eraser_tool_img,
-    font=('Arial', 18),
-    command=lambda: set_selected_tool(3)
-)
+btn_eraser_tool = create_button_img(buttonFrame, 3, 50, btn_color1, btn_color2, btn_color3, eraser_tool_img)
 btn_eraser_tool.grid(row=1, column=0, padx=buttons_padding_x, pady = buttons_padding_y)
 
-btn_line_tool = Button(
-    buttonFrame,
-    background=btn_color2,
-    foreground=btn_color4,
-    width=50,
-    height=50,
-    highlightthickness=2,
-    highlightbackground=btn_color2,
-    highlightcolor='WHITE',
-    activebackground=btn_color3,
-    activeforeground=btn_color4,
-    cursor='hand1',
-    border=0,
-    image=line_tool_img,
-    font=('Arial', 18),
-    command=lambda: set_selected_tool(4)
-)
+btn_line_tool = create_button_img(buttonFrame, 4, 50, btn_color1, btn_color2, btn_color3, line_tool_img)
 btn_line_tool.grid(row=1, column=1, padx=buttons_padding_x, pady = buttons_padding_y)
 
-btn_eyedropper_tool = Button(
-    buttonFrame,
-    background=btn_color2,
-    foreground=btn_color4,
-    width=50,
-    height=50,
-    highlightthickness=2,
-    highlightbackground=btn_color2,
-    highlightcolor='WHITE',
-    activebackground=btn_color3,
-    activeforeground=btn_color4,
-    cursor='hand1',
-    border=0,
-    image=eyedropper_img,
-    font=('Arial', 18),
-    command=lambda: set_selected_tool(5)
-)
+btn_eyedropper_tool = create_button_img(buttonFrame, 5, 50, btn_color1, btn_color2, btn_color3, eyedropper_img)
 btn_eyedropper_tool.grid(row=2, column=0, padx=buttons_padding_x, pady = buttons_padding_y)
 
-btn_rectangle_tool = Button(
-    buttonFrame,
-    background=btn_color2,
-    foreground=btn_color4,
-    width=50,
-    height=50,
-    highlightthickness=2,
-    highlightbackground=btn_color2,
-    highlightcolor='WHITE',
-    activebackground=btn_color3,
-    activeforeground=btn_color4,
-    cursor='hand1',
-    border=0,
-    image=rectangle_tool_img,
-    font=('Arial', 18),
-    command=lambda: set_selected_tool(6)
-)
+btn_rectangle_tool = create_button_img(buttonFrame, 6, 50, btn_color1, btn_color2, btn_color3, rectangle_tool_img)
 btn_rectangle_tool.grid(row=2, column=1, padx=buttons_padding_x, pady = buttons_padding_y)
 
+# Undo and redo buttons
+undo_img = ImageTk.PhotoImage(Image.open('./assets/icons8-undo-24.png'))
+redo_img = ImageTk.PhotoImage(Image.open('./assets/icons8-redo-24.png'))
+
+btn_undo = create_button_img(applicationFrame, 0, 30, btn_color1, btn_color2, btn_color3, undo_img)
+btn_undo.configure(command=lambda event="<Control-z>": undo_handler(event))
+btn_undo.grid(row=0, column=0, sticky='w', padx=(buttons_padding_x, 20), pady = (300, 0))
+
+btn_redo = create_button_img(applicationFrame, 0, 30, btn_color1, btn_color2, btn_color3, redo_img)
+btn_redo.configure(command=lambda event="<Control-y>": redo_handler(event))
+btn_redo.grid(row=0, column=0, sticky='w', padx=(40 + buttons_padding_x, 20), pady = (300, 0))
 
 # COLUMN 2
 
@@ -433,8 +367,11 @@ def draw_frame():
     ws.after(33, draw_frame)  # 30fps = ~33ms delay
 draw_frame()
 
-
 # COLUMN 3
+
+# Layer frame
+from testing.layers_editor import *
+create_layer_scroller(applicationFrame, canvas)
 
 # Color chooser
 current_color = "black"
