@@ -7,7 +7,7 @@ from core.canvas import Canvas
 from core.layer import Layer, BlendingMode
 
 
-def use_menu(_parent_window: Tk, project_name: Label, canvas: Canvas, draw_scale: list[float]) -> None:
+def use_menu(_parent_window: Tk, project_name: Label, canvas: Canvas, scale_factors) -> None:
     # open the menu window
     menu_window = Toplevel(_parent_window)
     menu_window.title("Pixel Editor Menu")
@@ -124,7 +124,9 @@ def use_menu(_parent_window: Tk, project_name: Label, canvas: Canvas, draw_scale
             # update the top texture
             canvas.update_top_texture()
 
-            draw_scale[0] = 800.0 / canvas.size[0]
+            #draw_scale[0] = 800.0 / canvas.size[0]
+            scale_factors[0] = 800.0 / canvas.size[0]
+            scale_factors[1] = 800.0 / canvas.size[1]
 
             change_canvas_size_window.grab_release()
             change_canvas_size_window.destroy()

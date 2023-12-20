@@ -7,8 +7,8 @@ def change_draw_color(color: str, current_color: StringVar):
     current_color.set(color)
 
 
-def open_menu(ws, project_name, canvas, draw_scale):
-    use_menu(ws, project_name, canvas, draw_scale)
+def open_menu(ws, project_name, canvas, scale_factors):
+    use_menu(ws, project_name, canvas, scale_factors)
 
 
 class SideBarGUI:
@@ -24,42 +24,42 @@ class SideBarGUI:
         if nr_of_colors == 1:
             color_button = CanvasWidget(columnFrame, width=50, height=50)
             color_button.configure(bg=self.color_palettes[self.current_palette_idx].colors[start_idx])
-            color_button.grid(row=6 + ypadding, column=0)
+            color_button.grid(row=7 + ypadding, column=0)
             color_button.bind("<Button-1>"
                               , lambda event, color=colors[start_idx]: change_draw_color(color, current_color))
             self.palette_buttons_array.append(color_button)
         elif nr_of_colors == 2:
             color_button = CanvasWidget(columnFrame, width=50, height=50)
             color_button.configure(bg=self.color_palettes[self.current_palette_idx].colors[start_idx])
-            color_button.grid(row=6 + ypadding, column=0, padx=(0, 65))
+            color_button.grid(row=7 + ypadding, column=0, padx=(0, 65))
             color_button.bind("<Button-1>"
                               , lambda event, color=colors[start_idx]: change_draw_color(color, current_color))
             self.palette_buttons_array.append(color_button)
 
             color_button = CanvasWidget(columnFrame, width=50, height=50)
             color_button.configure(bg=self.color_palettes[self.current_palette_idx].colors[start_idx + 1])
-            color_button.grid(row=6 + ypadding, column=0, padx=(65, 0))
+            color_button.grid(row=7 + ypadding, column=0, padx=(65, 0))
             color_button.bind("<Button-1>"
                               , lambda event, color=colors[start_idx + 1]: change_draw_color(color, current_color))
             self.palette_buttons_array.append(color_button)
         elif nr_of_colors == 3:
             color_button = CanvasWidget(columnFrame, width=50, height=50)
             color_button.configure(bg=self.color_palettes[self.current_palette_idx].colors[start_idx])
-            color_button.grid(row=6 + ypadding, column=0, padx=(0, 115))
+            color_button.grid(row=7 + ypadding, column=0, padx=(0, 115))
             color_button.bind("<Button-1>"
                               , lambda event, color=colors[start_idx]: change_draw_color(color, current_color))
             self.palette_buttons_array.append(color_button)
 
             color_button = CanvasWidget(columnFrame, width=50, height=50)
             color_button.configure(bg=self.color_palettes[self.current_palette_idx].colors[start_idx + 1])
-            color_button.grid(row=6 + ypadding, column=0)
+            color_button.grid(row=7 + ypadding, column=0)
             color_button.bind("<Button-1>"
                               , lambda event, color=colors[start_idx + 1]: change_draw_color(color, current_color))
             self.palette_buttons_array.append(color_button)
 
             color_button = CanvasWidget(columnFrame, width=50, height=50)
             color_button.configure(bg=self.color_palettes[self.current_palette_idx].colors[start_idx + 2])
-            color_button.grid(row=6 + ypadding, column=0, padx=(115, 0))
+            color_button.grid(row=7 + ypadding, column=0, padx=(115, 0))
             color_button.bind("<Button-1>"
                               , lambda event, color=colors[start_idx + 2]: change_draw_color(color, current_color))
             self.palette_buttons_array.append(color_button)
@@ -129,7 +129,7 @@ class SideBarGUI:
         select = OptionMenu(columnFrame, select_field, *self.palettes_idxs
                             , command=lambda v: self.palette_on_option_change(select_field.get(), columnFrame,
                                                                               current_color))
-        select.grid(row=3, column=0)
+        select.grid(row=4, column=0)
 
         self.update_palette_colors_display(columnFrame, current_color)
 
@@ -171,7 +171,7 @@ class SideBarGUI:
             select = OptionMenu(columnFrame, select_field, *self.palettes_idxs
                                 , command=lambda v: self.palette_on_option_change(select_field.get(), columnFrame,
                                                                                   current_color))
-            select.grid(row=3, column=0)
+            select.grid(row=4, column=0)
             select_field.trace("w", lambda *args: self.palette_on_option_change(select_field.get(), columnFrame,
                                                                                 current_color))
 
@@ -187,7 +187,7 @@ class SideBarGUI:
             select = OptionMenu(columnFrame, select_field, *self.palettes_idxs
                                 , command=lambda v: self.palette_on_option_change(select_field.get(), columnFrame,
                                                                                   current_color))
-            select.grid(row=3, column=0)
+            select.grid(row=4, column=0)
             select_field.trace("w", lambda *args: self.palette_on_option_change(select_field.get(), columnFrame,
                                                                                 current_color))
 
