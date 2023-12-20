@@ -35,14 +35,12 @@ def undo_handler(event):
     global canvas
     new_canvas = undo_manager.undo()
     if new_canvas is not None:
-        # print('undone')
         canvas = new_canvas
 
 def redo_handler(event):
     global canvas
     new_canvas = undo_manager.redo()
     if new_canvas is not None:
-        # print('redone')
         canvas = new_canvas
 
 def handle_preview():
@@ -189,11 +187,11 @@ def highlight_button():
     global btn_brush_tool, btn_fill_tool, btn_eraser_tool, btn_line_tool, btn_eyedropper_tool, btn_rectangle_tool
     global selected_tool, btn_color2, btn_color3
     buttons = [btn_brush_tool, btn_fill_tool, btn_eraser_tool, btn_line_tool, btn_eyedropper_tool, btn_rectangle_tool]
-    buttons[selected_tool - 1].config(background="#373738", activebackground="#373738")
+    buttons[selected_tool - 1].config(background=btn_highlight2, foreground=btn_highlight4, highlightbackground=btn_highlight2, activebackground=btn_highlight3, activeforeground=btn_highlight4)
 
     for i, button in enumerate(buttons):
         if i != selected_tool - 1:
-            button.config(background=btn_color2, activebackground=btn_color3)
+            button.config(background=btn_color1, foreground=btn_color3, highlightbackground=btn_color1, activebackground=btn_color2, activeforeground=btn_color3)
         
 
 def update_current_tool():
@@ -247,7 +245,6 @@ def create_button_img(_parent_frame, tool_index, size, c1, c2, c3, image) -> But
 # Initialize screen
 ws = Tk()
 ws.title('Pixel Editor')
-# ws.geometry('800x800')
 
 # This label should be the name of the project
 label = Label(ws, text="Pixel Editor", font=('Arial', 18))
@@ -263,12 +260,7 @@ applicationFrame.pack()
 
 # COLUMN 1
 
-#  Field for selecting the brush size
-# input_brush_size = Text(applicationFrame, height = 20, width = 20) 
-# input_brush_size.grid(row=0, column=0, sticky='nw', padx=(0, 20))
-# brush_size = input_brush_size.get(1.0, "end-1c")
-# print(brush_size)
-
+#  Select the brush size
 def change_brush_size(arg):
     BrushTool().set_brush_size(int(arg))
 
@@ -343,9 +335,11 @@ undo_img = ImageTk.PhotoImage(Image.open('./assets/icons8-undo-24.png'))
 redo_img = ImageTk.PhotoImage(Image.open('./assets/icons8-redo-24.png'))
 
 btn_undo = create_button_img(applicationFrame, 0, 30, btn_color1, btn_color2, btn_color3, undo_img)
+btn_undo.configure(command=lambda event="<Control-z>": undo_handler(event))
 btn_undo.grid(row=0, column=0, sticky='w', padx=(buttons_padding_x, 20), pady = (300, 0))
 
 btn_redo = create_button_img(applicationFrame, 0, 30, btn_color1, btn_color2, btn_color3, redo_img)
+btn_redo.configure(command=lambda event="<Control-y>": redo_handler(event))
 btn_redo.grid(row=0, column=0, sticky='w', padx=(40 + buttons_padding_x, 20), pady = (300, 0))
 
 # COLUMN 2
@@ -372,7 +366,6 @@ def draw_frame():
     canvas.preview_layer.clear()
     ws.after(33, draw_frame)  # 30fps = ~33ms delay
 draw_frame()
-
 
 # COLUMN 3
 
@@ -401,7 +394,7 @@ btn_layers_list = []
 # Index of the last highlighted button
 last_btn_highlighted = 0
 
-# How many buttons there are
+# How many buttons there are, used for naming the buttons, after some have been deleted
 btn_count = 1
 
 # Create a button for a layer
@@ -503,7 +496,7 @@ def delete_layer_button():
         return
     
     # Get the index of the layer that needs to be deleted
-    index = canvas.get_active_layer()
+    index = canvas.get_active_layer_index()
     canvas.delete_layer(index)
 
     btn_dummy.grid_forget()
@@ -537,7 +530,7 @@ def switch_up():
     global btn_layers_list
 
     # Get the index of the layer that needs to be moved
-    index = canvas.get_active_layer()
+    index = canvas.get_active_layer_index()
     if index == len(canvas.layers) - 1:
         return
 
@@ -551,7 +544,7 @@ def switch_down():
     global btn_layers_list
 
     # Get the index of the layer that needs to be moved
-    index = canvas.get_active_layer()
+    index = canvas.get_active_layer_index()
     if index == 0:
         return
 
