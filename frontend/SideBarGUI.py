@@ -1,6 +1,7 @@
 from frontend.color_palette import Color_Palette as cp
 from frontend.manage_color_palette import create_new_palette, edit_palette
 from frontend.menu import *
+from tkinter import Canvas as CanvasWidget
 
 
 def change_draw_color(color: str, current_color: StringVar):
