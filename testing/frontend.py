@@ -13,8 +13,6 @@ size = (100, 100)
 
 canvas = Canvas(size)
 canvas.add_layer(BlendingMode.NORMAL, fill_color=(255, 255, 255, 255))
-#canvas.add_layer(BlendingMode.NORMAL)
-#canvas.add_layer(BlendingMode.NORMAL)
 
 canvas.set_active_layer(0)
 
@@ -97,6 +95,28 @@ def update_current_tool():
         c_w.bind("<B1-Motion>", use_rectangle_tool)
         c_w.bind("<Button-1>", use_rectangle_tool)
 
+# Create a button with an image
+def create_button_img(_parent_frame, tool_index, size, c1, c2, c3, image) -> Button:
+    btn = Button(
+        _parent_frame,
+        background=c1,
+        foreground=c3,
+        width=size,
+        height=size,
+        highlightthickness=2,
+        highlightbackground=c1,
+        highlightcolor='WHITE',
+        activebackground=c2,
+        activeforeground=c3,
+        cursor='hand1',
+        border=0,
+        image=image
+    )
+
+    if tool_index != 0:
+        btn.configure(command=lambda: set_selected_tool(tool_index))
+
+    return btn
 
 # Initialize screen
 ws = Tk()
@@ -149,10 +169,9 @@ eyedropper_img = ImageTk.PhotoImage(Image.open('./assets/icons8-eye-dropper-48.p
 rectangle_tool_img = ImageTk.PhotoImage(Image.open('./assets/icons8-rectangle-48.png'))
 
 # Colors for buttons
-btn_color1 = '#0a0b0c'
-btn_color2 = '#606266'
-btn_color3 = '#72757a'
-btn_color4 = 'BLACK'
+btn_color1 = '#606266'
+btn_color2 = '#72757a'
+btn_color3 = 'BLACK'
 
 btn_highlight2 = "#81848a"
 btn_highlight3 = "#7a7e85"
@@ -170,159 +189,34 @@ def set_selected_tool(index):
     selected_tool = index
     update_current_tool()
 
-btn_brush_tool = Button(
-    buttonFrame,
-    background=btn_color2,
-    foreground=btn_color4,
-    width=50,
-    height=50,
-    highlightthickness=2,
-    highlightbackground=btn_color2,
-    highlightcolor='WHITE',
-    activebackground=btn_color3,
-    activeforeground=btn_color4,
-    cursor='hand1',
-    border=0,
-    image=brush_tool_img,
-    font=('Arial', 18),
-    command=lambda: set_selected_tool(1)
-)
+# Create all the buttons for tools
+btn_brush_tool = create_button_img(buttonFrame, 1, 50, btn_color1, btn_color2, btn_color3, brush_tool_img)
 btn_brush_tool.grid(row=0, column=0, padx=buttons_padding_x, pady = buttons_padding_y)
 
-btn_fill_tool = Button(
-    buttonFrame,
-    background=btn_color2,
-    foreground=btn_color4,
-    width=50,
-    height=50,
-    highlightthickness=2,
-    highlightbackground=btn_color2,
-    highlightcolor='WHITE',
-    activebackground=btn_color3,
-    activeforeground=btn_color4,
-    cursor='hand1',
-    border=0,
-    image=fill_tool_img,
-    font=('Arial', 18),
-    command=lambda: set_selected_tool(2)
-)
+btn_fill_tool = create_button_img(buttonFrame, 2, 50, btn_color1, btn_color2, btn_color3, fill_tool_img)
 btn_fill_tool.grid(row=0, column=1, padx=buttons_padding_x, pady = buttons_padding_y)
 
-btn_eraser_tool = Button(
-    buttonFrame,
-    background=btn_color2,
-    foreground=btn_color4,
-    width=50,
-    height=50,
-    highlightthickness=2,
-    highlightbackground=btn_color2,
-    highlightcolor='WHITE',
-    activebackground=btn_color3,
-    activeforeground=btn_color4,
-    cursor='hand1',
-    border=0,
-    image=eraser_tool_img,
-    font=('Arial', 18),
-    command=lambda: set_selected_tool(3)
-)
+btn_eraser_tool = create_button_img(buttonFrame, 3, 50, btn_color1, btn_color2, btn_color3, eraser_tool_img)
 btn_eraser_tool.grid(row=1, column=0, padx=buttons_padding_x, pady = buttons_padding_y)
 
-btn_line_tool = Button(
-    buttonFrame,
-    background=btn_color2,
-    foreground=btn_color4,
-    width=50,
-    height=50,
-    highlightthickness=2,
-    highlightbackground=btn_color2,
-    highlightcolor='WHITE',
-    activebackground=btn_color3,
-    activeforeground=btn_color4,
-    cursor='hand1',
-    border=0,
-    image=line_tool_img,
-    font=('Arial', 18),
-    command=lambda: set_selected_tool(4)
-)
+btn_line_tool = create_button_img(buttonFrame, 4, 50, btn_color1, btn_color2, btn_color3, line_tool_img)
 btn_line_tool.grid(row=1, column=1, padx=buttons_padding_x, pady = buttons_padding_y)
 
-btn_eyedropper_tool = Button(
-    buttonFrame,
-    background=btn_color2,
-    foreground=btn_color4,
-    width=50,
-    height=50,
-    highlightthickness=2,
-    highlightbackground=btn_color2,
-    highlightcolor='WHITE',
-    activebackground=btn_color3,
-    activeforeground=btn_color4,
-    cursor='hand1',
-    border=0,
-    image=eyedropper_img,
-    font=('Arial', 18),
-    command=lambda: set_selected_tool(5)
-)
+btn_eyedropper_tool = create_button_img(buttonFrame, 5, 50, btn_color1, btn_color2, btn_color3, eyedropper_img)
 btn_eyedropper_tool.grid(row=2, column=0, padx=buttons_padding_x, pady = buttons_padding_y)
 
-btn_rectangle_tool = Button(
-    buttonFrame,
-    background=btn_color2,
-    foreground=btn_color4,
-    width=50,
-    height=50,
-    highlightthickness=2,
-    highlightbackground=btn_color2,
-    highlightcolor='WHITE',
-    activebackground=btn_color3,
-    activeforeground=btn_color4,
-    cursor='hand1',
-    border=0,
-    image=rectangle_tool_img,
-    font=('Arial', 18),
-    command=lambda: set_selected_tool(6)
-)
+btn_rectangle_tool = create_button_img(buttonFrame, 6, 50, btn_color1, btn_color2, btn_color3, rectangle_tool_img)
 btn_rectangle_tool.grid(row=2, column=1, padx=buttons_padding_x, pady = buttons_padding_y)
 
 # Undo and redo buttons
 undo_img = ImageTk.PhotoImage(Image.open('./assets/icons8-undo-24.png'))
 redo_img = ImageTk.PhotoImage(Image.open('./assets/icons8-redo-24.png'))
 
-btn_undo = Button(
-    applicationFrame,
-    background=btn_color2,
-    foreground=btn_color4,
-    width=30,
-    height=30,
-    highlightthickness=2,
-    highlightbackground=btn_color2,
-    highlightcolor='WHITE',
-    activebackground=btn_color3,
-    activeforeground=btn_color4,
-    cursor='hand1',
-    border=0,
-    image=undo_img,
-)
+btn_undo = create_button_img(applicationFrame, 0, 30, btn_color1, btn_color2, btn_color3, undo_img)
 btn_undo.grid(row=0, column=0, sticky='w', padx=(buttons_padding_x, 20), pady = (300, 0))
 
-btn_redo = Button(
-    applicationFrame,
-    background=btn_color2,
-    foreground=btn_color4,
-    width=30,
-    height=30,
-    highlightthickness=2,
-    highlightbackground=btn_color2,
-    highlightcolor='WHITE',
-    activebackground=btn_color3,
-    activeforeground=btn_color4,
-    cursor='hand1',
-    border=0,
-    image=redo_img,
-)
+btn_redo = create_button_img(applicationFrame, 0, 30, btn_color1, btn_color2, btn_color3, redo_img)
 btn_redo.grid(row=0, column=0, sticky='w', padx=(40 + buttons_padding_x, 20), pady = (300, 0))
-
-
 
 # COLUMN 2
 
@@ -330,7 +224,6 @@ btn_redo.grid(row=0, column=0, sticky='w', padx=(40 + buttons_padding_x, 20), pa
 c_w = CanvasWidget(applicationFrame, width=800, height=800)
 c_w.bind("<B1-Motion>", use_brush)
 c_w.bind("<Button-1>", use_brush)
-# c_w.bind("<Button-3>", use_fill)
 c_w.grid(row=0, column=1)
 
 img = ImageTk.PhotoImage(canvas.top_texture.resize((800, 800), resample=Image.NEAREST))
@@ -372,6 +265,26 @@ btn_layers_list = []
 # Index of the last highlighted button
 last_btn_highlighted = 0
 
+# How many buttons there are
+btn_count = 1
+
+# Create a button for a layer
+def create_button_layer(_parent_frame, c1, c2, c3, index, text_index) -> Button:
+    return Button(
+        _parent_frame,
+        background=c1,
+        foreground=c3,
+        highlightthickness=2,
+        highlightbackground=c1,
+        highlightcolor='WHITE',
+        activebackground=c2,
+        activeforeground=c3,
+        cursor='hand1',
+        borderwidth=1,
+        text="Layer " + str(text_index),
+        command=lambda var=index: change_active_layer(var)
+    )
+
 def change_active_layer(index):
     global btn_layers_list, last_btn_highlighted
     print(f'index : {index}, last_btn_high : {last_btn_highlighted}')
@@ -391,11 +304,11 @@ def change_active_layer(index):
     # Return the old highlighted button to normal
     if last_btn_highlighted != index:
         btn_layers_list[last_btn_highlighted].configure(
-            background=btn_color2,
-            foreground=btn_color4,
-            highlightbackground=btn_color2,
-            activebackground=btn_color3,
-            activeforeground=btn_color4
+            background=btn_color1,
+            foreground=btn_color3,
+            highlightbackground=btn_color1,
+            activebackground=btn_color2,
+            activeforeground=btn_color3
         )
         last_btn_highlighted = index
 
@@ -403,47 +316,19 @@ def change_active_layer(index):
 # Add an invisible object as the last one
 btn_dummy = (Button(layers_frame,
     text="DUMMY",
-    background=btn_color2,
-    foreground=btn_color4,
+    background=btn_color1,
+    foreground=btn_color3,
     highlightthickness=0,
-    highlightbackground=btn_color2,
+    highlightbackground=btn_color1,
     highlightcolor='WHITE',
-    activebackground=btn_color3,
-    activeforeground=btn_color4,
+    activebackground=btn_color2,
+    activeforeground=btn_color3,
     borderwidth=1,
 ))
-#btn_dummy.grid(row=1, column=0, sticky='ew')
 
-# Print the layers
-def print_layers():
-    global btn_layers_list
-    for i in range(len(canvas.layers)):
-        btn_layers_list.append(Button(layers_frame,
-        text="Layer " + str(i),
-        background=btn_color2,
-        foreground=btn_color4,
-        highlightthickness=0,
-        highlightbackground=btn_color2,
-        highlightcolor='WHITE',
-        activebackground=btn_color3,
-        activeforeground=btn_color4,
-        cursor='hand1',
-        borderwidth=1,
-        command=lambda i=i: change_active_layer(i)
-        ))
-        #btn_layers_list[i].pack(fill='x')
-        btn_layers_list[i].grid(row=i, column=0, sticky='ew')
-
-    # Highlight the active layer, which is the first
-    btn_layers_list[0].configure(
-    background=btn_highlight2,
-    foreground=btn_highlight4,
-    highlightbackground=btn_highlight2,
-    activebackground=btn_highlight3,
-    activeforeground=btn_highlight4
-    )
-print_layers()
-
+# Initially, there is only one layer which is highlighted
+btn_layers_list.append(create_button_layer(layers_frame, btn_highlight2, btn_highlight3, btn_highlight4, 0, 0))
+btn_layers_list[0].grid(row=0, column=0, sticky='ew')
 
 # Buttons for layers
 add_img = ImageTk.PhotoImage(Image.open('./assets/icons8-plus-24.png'))
@@ -452,28 +337,16 @@ up_img = ImageTk.PhotoImage(Image.open('./assets/icons8-up-24.png'))
 down_img = ImageTk.PhotoImage(Image.open('./assets/icons8-down-24.png'))
 
 def add_layer_btn():
-    global btn_layers_list, btn_dummy
+    global btn_layers_list, btn_dummy, btn_count
 
     # Add new layer to canvas layer list and new button to button list
     canvas.add_layer(BlendingMode.NORMAL)
-    btn_layers_list.append(Button(layers_frame,
-        text="Layer " + str(len(canvas.layers) - 1),
-        background=btn_color2,
-        foreground=btn_color4,
-        highlightthickness=0,
-        highlightbackground=btn_color2,
-        highlightcolor='WHITE',
-        activebackground=btn_color3,
-        activeforeground=btn_color4,
-        cursor='hand1',
-        borderwidth=1,
-        command=lambda i=len(canvas.layers)-1: change_active_layer(i)
-        ))
-    #btn_layers_list[len(btn_layers_list) - 1].pack(fill='x')
-    #btn_layers_list[len(btn_layers_list) - 1].grid(row=len(btn_layers_list) - 1, column=0, sticky='ew')
+    btn_count += 1
+    btn_layers_list.append(create_button_layer(layers_frame, btn_color1, btn_color2, btn_color3, len(canvas.layers)-1, btn_count-1))
 
     btn_dummy.grid_forget()
 
+    # Permute all buttons a row down from their initial position, to make room for the new button
     for i in range(0, len(btn_layers_list)):
         btn_layers_list[i].grid_forget()
         btn_layers_list[i].grid(row=len(btn_layers_list) - i - 1, column=0, sticky='ew')
@@ -495,7 +368,6 @@ def delete_layer_button():
     
     # Get the index of the layer that needs to be deleted
     index = canvas.get_active_layer()
-
     canvas.delete_layer(index)
 
     btn_dummy.grid_forget()
@@ -510,7 +382,7 @@ def delete_layer_button():
     btn_layers_list[index].destroy()
     btn_layers_list.pop(index)
 
-    # Rebinding the buttons
+    # Rebind the buttons
     for i in range(len(btn_layers_list)):
         btn_layers_list[i].configure(command=lambda var=i: change_active_layer(var))
     if (index != 0):
@@ -530,103 +402,44 @@ def switch_up():
 
     # Get the index of the layer that needs to be moved
     index = canvas.get_active_layer()
-
     if index == len(canvas.layers) - 1:
         return
 
-    aux_text = text = btn_layers_list[index].cget("text")
+    aux_text = btn_layers_list[index].cget("text")
     btn_layers_list[index].configure(text = btn_layers_list[index + 1].cget("text"), command=lambda var=index: change_active_layer(var))
     btn_layers_list[index + 1].configure(text = aux_text, command=lambda var=index+1: change_active_layer(var))
 
     change_active_layer(index + 1)
-    last_btn_highlighted = index
 
 def switch_down():
     global btn_layers_list
 
     # Get the index of the layer that needs to be moved
     index = canvas.get_active_layer()
-
     if index == 0:
         return
 
-    aux_text = text = btn_layers_list[index].cget("text")
+    aux_text = btn_layers_list[index].cget("text")
     btn_layers_list[index].configure(text = btn_layers_list[index - 1].cget("text"), command=lambda var=index: change_active_layer(var))
     btn_layers_list[index - 1].configure(text = aux_text, command=lambda var=index-1: change_active_layer(var))
 
     change_active_layer(index - 1)
-    last_btn_highlighted = index
 
-btn_add = Button(
-    applicationFrame,
-    background=btn_color2,
-    foreground=btn_color4,
-    width=30,
-    height=30,
-    highlightthickness=2,
-    highlightbackground=btn_color2,
-    highlightcolor='WHITE',
-    activebackground=btn_color3,
-    activeforeground=btn_color4,
-    cursor='hand1',
-    border=0,
-    image=add_img,
-    command=add_layer_btn
-)
+# Create, configure and display the 4 buttons for editing layers
+btn_add = create_button_img(applicationFrame, 0, 30, btn_color1, btn_color2, btn_color3, add_img)
+btn_add.configure(command=add_layer_btn)
 btn_add.grid(row=0, column=2, sticky='nw', pady=(10, 0), padx=10)
 
-btn_delete = Button(
-    applicationFrame,
-    background=btn_color2,
-    foreground=btn_color4,
-    width=30,
-    height=30,
-    highlightthickness=2,
-    highlightbackground=btn_color2,
-    highlightcolor='WHITE',
-    activebackground=btn_color3,
-    activeforeground=btn_color4,
-    cursor='hand1',
-    border=0,
-    image=delete_img,
-    command=delete_layer_button
-)
+btn_delete = create_button_img(applicationFrame, 0, 30, btn_color1, btn_color2, btn_color3, delete_img)
+btn_delete.configure(command=delete_layer_button)
 btn_delete.grid(row=0, column=2, sticky='nw', pady=(10, 0), padx=(45, 10))
 
-btn_up = Button(
-    applicationFrame,
-    background=btn_color2,
-    foreground=btn_color4,
-    width=30,
-    height=30,
-    highlightthickness=2,
-    highlightbackground=btn_color2,
-    highlightcolor='WHITE',
-    activebackground=btn_color3,
-    activeforeground=btn_color4,
-    cursor='hand1',
-    border=0,
-    image=up_img,
-    command=switch_up
-)
+btn_up = create_button_img(applicationFrame, 0, 30, btn_color1, btn_color2, btn_color3, up_img)
+btn_up.configure(command=switch_up)
 btn_up.grid(row=0, column=2, sticky='nw', pady=(10, 0), padx=(80, 10))
 
-btn_down = Button(
-    applicationFrame,
-    background=btn_color2,
-    foreground=btn_color4,
-    width=30,
-    height=30,
-    highlightthickness=2,
-    highlightbackground=btn_color2,
-    highlightcolor='WHITE',
-    activebackground=btn_color3,
-    activeforeground=btn_color4,
-    cursor='hand1',
-    border=0,
-    image=down_img,
-    command=switch_down
-)
+btn_down = create_button_img(applicationFrame, 0, 30, btn_color1, btn_color2, btn_color3, down_img)
+btn_down.configure(command=switch_down)
 btn_down.grid(row=0, column=2, sticky='nw', pady=(10, 0), padx=(115, 10))
 
 # Color chooser
