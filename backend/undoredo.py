@@ -1,5 +1,4 @@
 from backend.canvas import Canvas
-from backend.utilties import export
 
 class UndoRedoManager:
     def __init__(self) -> None:
@@ -7,7 +6,6 @@ class UndoRedoManager:
         self.redo_stack = []
 
     def push_canvas(self, canvas : Canvas):
-        # print('pushed canvas')
 
         canvas.update_top_texture()
         self.undo_stack.append(canvas.copy())

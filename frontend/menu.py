@@ -4,9 +4,10 @@ from PIL import Image
 from backend import utilties as utils
 from backend.canvas import Canvas
 from backend.layer import Layer
+from backend.undoredo import UndoRedoManager
 
 
-def use_menu(_parent_window: Tk, project_name: Label, canvas: Canvas, scale_factors) -> None:
+def use_menu(_parent_window: Tk, project_name: Label, canvas: Canvas, scale_factors, undoredo : UndoRedoManager) -> None:
     # open the menu window
     menu_window = Toplevel(_parent_window)
     menu_window.title("Pixel Editor Menu")
@@ -104,6 +105,8 @@ def use_menu(_parent_window: Tk, project_name: Label, canvas: Canvas, scale_fact
             menu_window.grab_set()
 
         def save_changes() -> None:
+            undoredo.push_canvas(canvas)
+
             old_width = canvas.size[0]
             old_height = canvas.size[1]
 

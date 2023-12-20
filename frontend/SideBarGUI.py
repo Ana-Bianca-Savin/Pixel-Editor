@@ -8,8 +8,8 @@ def change_draw_color(color: str, current_color: StringVar):
     current_color.set(color)
 
 
-def open_menu(ws, project_name, canvas, scale_factors):
-    use_menu(ws, project_name, canvas, scale_factors)
+def open_menu(ws, project_name, canvas, scale_factors, undoredo : UndoRedoManager):
+    use_menu(ws, project_name, canvas, scale_factors, undoredo)
 
 
 class SideBarGUI:
