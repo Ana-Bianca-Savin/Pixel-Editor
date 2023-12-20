@@ -35,3 +35,6 @@ class BrushTool(Tool):
 
     def set_brush_type(self, type):
         self._instance.brush_type = type
+
+    def get_brush_size(self):
+        return self._instance.brush_size
