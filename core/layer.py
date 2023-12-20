@@ -24,6 +24,10 @@ class Layer:
     def set_pixel(self, point, new_color):
         self.__draw_object.point(point, fill=new_color)
 
+    def clear(self):
+        empty_data = [(0, 0, 0, 0)] * (self.layer_size[0] * self.layer_size[1])
+        self.texture.putdata(empty_data)
+
     def get_pixel(self, point):
         return self.texture.getpixel(point)
 
