@@ -374,7 +374,7 @@ last_btn_highlighted = 0
 
 def change_active_layer(index):
     global btn_layers_list, last_btn_highlighted
-
+    print(f'index : {index}, last_btn_high : {last_btn_highlighted}')
     # Set the new active layer
     canvas.set_active_layer(index)
     print(index)
@@ -475,7 +475,6 @@ def add_layer_btn():
     btn_dummy.grid_forget()
 
     for i in range(0, len(btn_layers_list)):
-        print(str(i+1) + " " + str(i) + str(btn_layers_list[i]))
         btn_layers_list[i].grid_forget()
         btn_layers_list[i].grid(row=len(btn_layers_list) - i - 1, column=0, sticky='ew')
     btn_layers_list[len(btn_layers_list) - 1].grid(row=0, column=0, sticky='ew')
@@ -487,6 +486,76 @@ def add_layer_btn():
     # Reconfigure canvas for the new size
     layers_canvas.configure(scrollregion = layers_canvas.bbox('all'))
 
+def delete_layer_button():
+    global btn_layers_list, last_btn_highlighted
+
+    # If there if only one layer left, it can NOT be deleted
+    if len(canvas.layers) == 1:
+        return
+    
+    # Get the index of the layer that needs to be deleted
+    index = canvas.get_active_layer()
+
+    canvas.delete_layer(index)
+
+    btn_dummy.grid_forget()
+    
+    # Refactor the buttons' rows
+    for i in range(index, -1, -1):
+        btn_layers_list[i].grid_forget()
+        if len(btn_layers_list) - i - 2 < 0:
+            continue
+        else:
+            btn_layers_list[i].grid(row=len(btn_layers_list) - i - 2, column=0, sticky='ew')
+    btn_layers_list[index].destroy()
+    btn_layers_list.pop(index)
+
+    # Rebinding the buttons
+    for i in range(len(btn_layers_list)):
+        btn_layers_list[i].configure(command=lambda var=i: change_active_layer(var))
+    if (index != 0):
+        last_btn_highlighted = index - 1
+        change_active_layer(index - 1)
+    else:
+        change_active_layer(0)
+
+    if len(btn_layers_list) >= 4:
+        btn_dummy.grid(row=len(btn_layers_list), column=0, sticky='ew')
+
+    # Reconfigure canvas for the new size
+    layers_canvas.configure(scrollregion = layers_canvas.bbox('all'))
+
+def switch_up():
+    global btn_layers_list
+
+    # Get the index of the layer that needs to be moved
+    index = canvas.get_active_layer()
+
+    if index == len(canvas.layers) - 1:
+        return
+
+    aux_text = text = btn_layers_list[index].cget("text")
+    btn_layers_list[index].configure(text = btn_layers_list[index + 1].cget("text"), command=lambda var=index: change_active_layer(var))
+    btn_layers_list[index + 1].configure(text = aux_text, command=lambda var=index+1: change_active_layer(var))
+
+    change_active_layer(index + 1)
+    last_btn_highlighted = index
+
+def switch_down():
+    global btn_layers_list
+
+    # Get the index of the layer that needs to be moved
+    index = canvas.get_active_layer()
+
+    if index == 0:
+        return
+
+    aux_text = text = btn_layers_list[index].cget("text")
+    btn_layers_list[index].configure(text = btn_layers_list[index - 1].cget("text"), command=lambda var=index: change_active_layer(var))
+    btn_layers_list[index - 1].configure(text = aux_text, command=lambda var=index-1: change_active_layer(var))
+
+    change_active_layer(index - 1)
+    last_btn_highlighted = index
 
 btn_add = Button(
     applicationFrame,
@@ -520,6 +589,7 @@ btn_delete = Button(
     cursor='hand1',
     border=0,
     image=delete_img,
+    command=delete_layer_button
 )
 btn_delete.grid(row=0, column=2, sticky='nw', pady=(10, 0), padx=(45, 10))
 
@@ -537,6 +607,7 @@ btn_up = Button(
     cursor='hand1',
     border=0,
     image=up_img,
+    command=switch_up
 )
 btn_up.grid(row=0, column=2, sticky='nw', pady=(10, 0), padx=(80, 10))
 
@@ -554,6 +625,7 @@ btn_down = Button(
     cursor='hand1',
     border=0,
     image=down_img,
+    command=switch_down
 )
 btn_down.grid(row=0, column=2, sticky='nw', pady=(10, 0), padx=(115, 10))
 
