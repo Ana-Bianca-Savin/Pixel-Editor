@@ -1,5 +1,5 @@
 from enum import Enum
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageColor
 
 class BlendingMode(Enum):
     NORMAL = 1
@@ -28,6 +28,11 @@ class Layer:
         empty_data = [(0, 0, 0, 0)] * (self.layer_size[0] * self.layer_size[1])
         self.texture.putdata(empty_data)
 
+    def flood_fill(self, seed, fill_color):
+        fill_color = ImageColor.getrgb(fill_color)
+        fill_color = (fill_color[0], fill_color[1], fill_color[2], 255)
+        ImageDraw.floodfill(image=self.texture, xy=seed, value=fill_color)
+
     def get_pixel(self, point):
         return self.texture.getpixel(point)
 
@@ -54,3 +59,6 @@ class Layer:
 
         alpha_mask = texture.split()[3]
         self.texture.paste(texture, [left, top, right, bottom], alpha_mask)
+
+    def copy(self):
+        return Layer(self.layer_size, self.blending_mode, self.texture.copy())

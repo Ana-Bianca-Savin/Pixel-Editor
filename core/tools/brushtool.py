@@ -19,6 +19,10 @@ class BrushTool(Tool):
     # Paint the pixels with the brush, depending on its type
     def paint(self, canvas, x, y, color):
 
+        if self.get_brush_size() == 1:
+                canvas.set_pixel((x, y), color)
+                return
+
         if self.brush_type is BrushType.SQUARE:
             # First calculate the top left corner
             x = x - self.brush_size // 2

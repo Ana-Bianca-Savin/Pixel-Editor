@@ -26,3 +26,13 @@ class MouseUtil():
     def update_m1_button(self, m1_down : bool):
         self.prev_m1_down = self.m1_down
         self.m1_down = m1_down
+
+    def interpolate(self, num_steps: int):
+        step_x = (self.mouse_x - self.prev_x) / num_steps
+        step_y = (self.mouse_y - self.prev_y) / num_steps
+        points = []
+        for i in range(num_steps):
+            x = int(self.prev_x + i * step_x)
+            y = int(self.prev_y + i * step_y)
+            points.append((x, y))
+        return points
