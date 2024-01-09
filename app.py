@@ -30,17 +30,23 @@ from PIL import ImageTk, Image
 
 
 def undo_handler(event):
-    global canvas
+    global canvas, scale_factors
     new_canvas = undo_manager.undo()
     if new_canvas is not None:
         canvas = new_canvas
+        scale_factor_x = real_size[0] / canvas.size[0]
+        scale_factor_y = real_size[1] / canvas.size[1]
+        scale_factors = [scale_factor_x, scale_factor_y]
 
 
 def redo_handler(event):
-    global canvas
+    global canvas, scale_factors
     new_canvas = undo_manager.redo()
     if new_canvas is not None:
         canvas = new_canvas
+        scale_factor_x = real_size[0] / canvas.size[0]
+        scale_factor_y = real_size[1] / canvas.size[1]
+        scale_factors = [scale_factor_x, scale_factor_y]
 
 
 def handle_preview():
@@ -60,8 +66,12 @@ def handle_preview():
 
     if selected_tool == 6 and RectangleTool().get_drawing_state() is True:
         # Draw the preview
-        origin = RectangleTool().get_origin()
-        end = (MouseUtil().mouse_x, MouseUtil().mouse_y)
+        start_x, start_y = RectangleTool().get_origin()
+        current_x, current_y = MouseUtil().mouse_x, MouseUtil().mouse_y
+
+        # Calculate the top-left and bottom-right corners
+        origin = (min(start_x, current_x), min(start_y, current_y))
+        end = (max(start_x, current_x), max(start_y, current_y))
 
         def distance(p0, p1):
             return (p0[0] - p1[0]) ** 2 + (p0[1] - p1[1]) ** 2
@@ -97,8 +107,13 @@ def release_m1(event):
 
     if selected_tool == 6 and RectangleTool().get_drawing_state() is True:
         RectangleTool().set_drawing_state(False)
-        origin = RectangleTool().get_origin()
-        end = (MouseUtil().mouse_x, MouseUtil().mouse_y)
+        
+        start_x, start_y = RectangleTool().get_origin()
+        current_x, current_y = MouseUtil().mouse_x, MouseUtil().mouse_y
+
+        # Calculate the top-left and bottom-right corners
+        origin = (min(start_x, current_x), min(start_y, current_y))
+        end = (max(start_x, current_x), max(start_y, current_y))
 
         def distance(p0, p1):
             return (p0[0] - p1[0]) ** 2 + (p0[1] - p1[1]) ** 2
@@ -449,13 +464,13 @@ def draw_preview_frame():
     global preview_image, preview_canvas, ws
     preview_canvas.delete("all")
 
-    preview_canvas = CanvasWidget(column3Frame, width=250, height=250)
-    preview_canvas.grid(row=1, column=0)
+    # preview_canvas = CanvasWidget(column3Frame, width=250, height=250)
+    # preview_canvas.grid(row=1, column=0)
 
     preview_image = ImageTk.PhotoImage(canvas.top_texture.resize((250, 250), resample=Image.NEAREST))
     preview_canvas.create_image(0, 0, anchor=NW, image=preview_image)
 
-    ws.after(100, lambda: draw_preview_frame())
+    ws.after(33, lambda: draw_preview_frame())
 
 
 draw_preview_frame()
@@ -464,7 +479,7 @@ sidebargui.update_palette_colors_display(column3Frame, current_color)
 
 # define menu button
 menu_button = Button(column3Frame, text="Menu", font=('Arial', 11)
-                     , command=lambda: open_menu(ws, project_name, canvas, scale_factors))
+                     , command=lambda: open_menu(ws, project_name, canvas, scale_factors, undo_manager))
 menu_button.grid(row=2, column=0)
 
 # label for message 'Current palette'
